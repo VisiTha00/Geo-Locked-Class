@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "Geo-Locked Class",
+    "slug": "geo-locked-class",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.visitha.geolockedclass"
+    },
+    "android": {
+      "package": "com.visitha.geolockedclass",
+      "versionCode": 1,
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
+    },
+    "plugins": [
+      "expo-notifications",
+      "expo-location",
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "1cf2f72a-aca6-403f-8092-7afdc4c47cd2"
+      }
+    }
+  }
+}
