@@ -10,7 +10,6 @@ import LoginScreen from "./src/screens/LoginScreen";
 import TeacherDashboard from "./src/screens/TeacherDashboard";
 import StudentDashboard from "./src/screens/StudentDashboard";
 import SessionScreen from "./src/screens/SessionScreen";
-import NotificationScreen from "./src/screens/NotificationScreen";
 import SessionCreationScreen from "./src/screens/SessionCreationScreen";
 import AttendanceScreen from "./src/screens/AttendanceScreen";
 import VotingScreen from "./src/screens/VotingScreen";
