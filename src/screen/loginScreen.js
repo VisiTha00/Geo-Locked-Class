@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   View,
   Text,
@@ -55,7 +55,6 @@ const LoginScreen = () => {
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
           <View style={styles.content}>
-            {/* Header */}
             <View style={styles.header}>
               <View style={styles.logoContainer}>
                 <Text style={styles.logoIcon}>🎓</Text>
@@ -64,7 +63,6 @@ const LoginScreen = () => {
               <Text style={styles.subtitle}>Sign in to continue</Text>
             </View>
 
-            {/* Login Form */}
             <View style={styles.form}>
               <View style={styles.inputContainer}>
                 <Text style={styles.inputLabel}>Email Address</Text>
@@ -111,16 +109,6 @@ const LoginScreen = () => {
                   </Text>
                 </LinearGradient>
               </TouchableOpacity>
-            </View>
-
-            {/* Footer */}
-            <View style={styles.footer}>
-              {/* <Text style={styles.note}>
-                Your role will be automatically detected based on your email
-              </Text>
-              <Text style={styles.setupNote}>
-                Setup: admin@setup.com / setup123
-              </Text> */}
             </View>
           </View>
         </KeyboardAvoidingView>
