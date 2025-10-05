@@ -1,257 +1,255 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
+  TextInput,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  StatusBar,
+  Dimensions,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { useAuth } from "../context/AuthContext";
 
-const NotificationScreen = ({ navigation }) => {
-  const handleGoBack = () => {
-    navigation.goBack();
-  };
+const { width, height } = Dimensions.get("window");
 
-  const handleCheckLocation = () => {
-    // This would trigger a location check in the student dashboard
-    navigation.navigate("StudentDashboard");
+const LoginScreen = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth();
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const result = await login(email, password);
+      if (!result.success) {
+        Alert.alert("Error", result.error || "Login failed");
+      }
+    } catch (error) {
+      Alert.alert("Error", "An unexpected error occurred");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Session Notification</Text>
-        <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
-          <Text style={styles.backButtonText}>Back</Text>
-        </TouchableOpacity>
-      </View>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#667eea" />
+      <LinearGradient
+        colors={["#667eea", "#764ba2", "#f093fb"]}
+        style={styles.gradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
+        <KeyboardAvoidingView
+          style={styles.keyboardView}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+          <View style={styles.content}>
+            {/* Header */}
+            <View style={styles.header}>
+              <View style={styles.logoContainer}>
+                <Text style={styles.logoIcon}>🎓</Text>
+              </View>
+              <Text style={styles.title}>Welcome Back</Text>
+              <Text style={styles.subtitle}>Sign in to continue</Text>
+            </View>
 
-      <View style={styles.content}>
-        <View style={styles.notificationCard}>
-          <View style={styles.iconContainer}>
-            <Text style={styles.icon}>📢</Text>
+            {/* Login Form */}
+            <View style={styles.form}>
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>Email Address</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter your email"
+                  placeholderTextColor="rgba(255, 255, 255, 0.7)"
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>Password</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter your password"
+                  placeholderTextColor="rgba(255, 255, 255, 0.7)"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                />
+              </View>
+
+              <TouchableOpacity
+                style={[
+                  styles.loginButton,
+                  isLoading && styles.loginButtonDisabled,
+                ]}
+                onPress={handleLogin}
+                disabled={isLoading}
+              >
+                <LinearGradient
+                  colors={isLoading ? ["#ccc", "#999"] : ["#ff6b6b", "#ee5a24"]}
+                  style={styles.loginButtonGradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                >
+                  <Text style={styles.loginButtonText}>
+                    {isLoading ? "Signing in..." : "Sign In"}
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+
+            {/* Footer */}
+            <View style={styles.footer}>
+              {/* <Text style={styles.note}>
+                Your role will be automatically detected based on your email
+              </Text>
+              <Text style={styles.setupNote}>
+                Setup: admin@setup.com / setup123
+              </Text> */}
+            </View>
           </View>
-          <Text style={styles.notificationTitle}>Session Started!</Text>
-          <Text style={styles.notificationMessage}>
-            A class session has started, but you are currently outside the
-            required range to join.
-          </Text>
-        </View>
-
-        <View style={styles.infoCard}>
-          <Text style={styles.infoTitle}>What does this mean?</Text>
-          <View style={styles.infoList}>
-            <Text style={styles.infoText}>
-              • You need to be within 20 meters of the teacher's location to
-              join the session
-            </Text>
-            <Text style={styles.infoText}>
-              • Move closer to the teacher's location and check your position
-            </Text>
-            <Text style={styles.infoText}>
-              • Your location is checked automatically when you're near the
-              session
-            </Text>
-            <Text style={styles.infoText}>
-              • You'll be able to join once you're in range
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.actionCard}>
-          <TouchableOpacity
-            style={styles.checkLocationButton}
-            onPress={handleCheckLocation}
-          >
-            <Text style={styles.checkLocationButtonText}>
-              Check My Location
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.goBackButton} onPress={handleGoBack}>
-            <Text style={styles.goBackButtonText}>Return to Dashboard</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.helpCard}>
-          <Text style={styles.helpTitle}>Need Help?</Text>
-          <Text style={styles.helpText}>
-            If you're having trouble getting in range:
-          </Text>
-          <View style={styles.helpList}>
-            <Text style={styles.helpItem}>
-              • Make sure location services are enabled
-            </Text>
-            <Text style={styles.helpItem}>
-              • Check if you have a clear view of the sky for GPS
-            </Text>
-            <Text style={styles.helpItem}>
-              • Try moving to a different location
-            </Text>
-            <Text style={styles.helpItem}>
-              • Contact your teacher if the issue persists
-            </Text>
-          </View>
-        </View>
-      </View>
-    </ScrollView>
+        </KeyboardAvoidingView>
+      </LinearGradient>
+    </View>
   );
 };
+
+export default LoginScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
   },
-  header: {
-    backgroundColor: "#FF9800",
-    paddingTop: 50,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+  gradient: {
+    flex: 1,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "white",
-  },
-  backButton: {
-    backgroundColor: "rgba(255,255,255,0.2)",
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  backButtonText: {
-    color: "white",
-    fontWeight: "bold",
+  keyboardView: {
+    flex: 1,
   },
   content: {
     flex: 1,
-    padding: 20,
+    justifyContent: "center",
+    paddingHorizontal: 30,
+    paddingVertical: 40,
   },
-  notificationCard: {
-    backgroundColor: "white",
-    padding: 30,
-    borderRadius: 15,
-    marginBottom: 20,
+  header: {
     alignItems: "center",
+    marginBottom: 50,
+  },
+  logoContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 20,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
     elevation: 8,
   },
-  iconContainer: {
-    marginBottom: 15,
+  logoIcon: {
+    fontSize: 40,
   },
-  icon: {
-    fontSize: 48,
-  },
-  notificationTitle: {
-    fontSize: 24,
+  title: {
+    fontSize: 28,
     fontWeight: "bold",
-    color: "#333",
-    marginBottom: 10,
-    textAlign: "center",
-  },
-  notificationMessage: {
-    fontSize: 16,
-    color: "#666",
-    textAlign: "center",
-    lineHeight: 24,
-  },
-  infoCard: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 10,
-    marginBottom: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  infoTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 15,
-    color: "#333",
-  },
-  infoList: {
-    gap: 10,
-  },
-  infoText: {
-    fontSize: 14,
-    color: "#666",
-    lineHeight: 20,
-  },
-  actionCard: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 10,
-    marginBottom: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  checkLocationButton: {
-    backgroundColor: "#007AFF",
-    padding: 15,
-    borderRadius: 8,
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  checkLocationButtonText: {
     color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 8,
+    textShadowColor: "rgba(0, 0, 0, 0.3)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
-  goBackButton: {
-    backgroundColor: "#6C757D",
-    padding: 15,
-    borderRadius: 8,
+  subtitle: {
+    fontSize: 16,
+    color: "rgba(255, 255, 255, 0.9)",
+    textAlign: "center",
+    fontWeight: "300",
+  },
+  form: {
+    marginBottom: 30,
+  },
+  inputContainer: {
+    marginBottom: 20,
+  },
+  inputLabel: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "rgba(255, 255, 255, 0.9)",
+    marginBottom: 8,
+    marginLeft: 4,
+  },
+  input: {
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    fontSize: 16,
+    color: "white",
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.2)",
+  },
+  loginButton: {
+    borderRadius: 12,
+    overflow: "hidden",
+    marginTop: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  loginButtonGradient: {
+    paddingVertical: 16,
+    paddingHorizontal: 24,
     alignItems: "center",
   },
-  goBackButtonText: {
+  loginButtonDisabled: {
+    opacity: 0.6,
+  },
+  loginButtonText: {
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
   },
-  helpCard: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 10,
-    marginBottom: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+  footer: {
+    alignItems: "center",
   },
-  helpTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: "#333",
-  },
-  helpText: {
+  note: {
     fontSize: 14,
-    color: "#666",
-    marginBottom: 15,
+    color: "rgba(255, 255, 255, 0.8)",
+    textAlign: "center",
+    marginBottom: 8,
     lineHeight: 20,
   },
-  helpList: {
-    gap: 8,
-  },
-  helpItem: {
-    fontSize: 14,
-    color: "#666",
-    lineHeight: 20,
+  setupNote: {
+    fontSize: 12,
+    color: "rgba(255, 255, 255, 0.6)",
+    textAlign: "center",
+    fontStyle: "italic",
   },
 });
-
-export default NotificationScreen;
