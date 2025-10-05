@@ -5,9 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.visitha.geolockedclass"
@@ -24,11 +22,8 @@
         "android.permission.ACCESS_FINE_LOCATION"
       ]
     },
-    "plugins": [
-      "expo-notifications",
-      "expo-location",
-      "expo-font"
-    ],
+    "plugins": ["expo-notifications", "expo-location", "expo-font"],
+
     "extra": {
       "eas": {
         "projectId": "1cf2f72a-aca6-403f-8092-7afdc4c47cd2"
