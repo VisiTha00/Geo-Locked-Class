@@ -6,7 +6,7 @@ import { StyleSheet, View } from "react-native";
 import * as Notifications from "expo-notifications";
 
 import SplashScreen from "./src/screens/SplashScreen";
-import LoginScreen from "./src/screens/LoginScreen";
+import LoginScreen from "./src/screen/loginScreen";
 import TeacherDashboard from "./src/screens/TeacherDashboard";
 import StudentDashboard from "./src/screens/StudentDashboard";
 import SessionScreen from "./src/screens/SessionScreen";
