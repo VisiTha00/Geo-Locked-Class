@@ -14,15 +14,13 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { useAuth } from "../context/AuthContext";
 
-const { width, height } = Dimensions.get("window");
-
 function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
 
-  const handleLogin = async () => {
+  async function handleLogin() {
     if (!email || !password) {
       Alert.alert("Error", "Please fill in all fields");
       return;
@@ -39,7 +37,7 @@ function LoginScreen() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
   return (
     <View style={styles.container}>
