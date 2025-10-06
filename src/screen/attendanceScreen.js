@@ -15,8 +15,6 @@ import { useEnhancedSession } from "../context/EnhancedSessionContext";
 import { useAuth } from "../context/AuthContext";
 import { formatTime, getDistanceToSession } from "../helper/helperFunctions";
 
-const { width, height } = Dimensions.get("window");
-
 function AttendanceScreen({ navigation }) {
   const {
     activeSession,
@@ -80,7 +78,7 @@ function AttendanceScreen({ navigation }) {
     }
   }, [isSessionActive, activeSession, hasSubmitted]);
 
-  const handleMarkAttendance = async () => {
+  async function handleMarkAttendance() {
     if (!canSubmit()) {
       Alert.alert(
         "Cannot Mark Attendance",
@@ -120,7 +118,7 @@ function AttendanceScreen({ navigation }) {
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }
 
   if (!activeSession) {
     return (
@@ -220,8 +218,10 @@ function AttendanceScreen({ navigation }) {
 
                 <Text style={styles.locationLabel}>Distance to Session:</Text>
                 <Text style={styles.locationText}>
-                  {getDistanceToSession()?.toFixed(1)}m /{" "}
-                  {activeSession.location.radius}m
+                  {getDistanceToSession(activeSession, userLocation)?.toFixed(
+                    1
+                  )}
+                  m / {activeSession.location.radius}m
                 </Text>
               </View>
             )}

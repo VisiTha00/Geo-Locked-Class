@@ -4,7 +4,7 @@ export function formatTime(seconds) {
   return `${mins}:${secs.toString().padStart(2, "0")}`;
 }
 
-export function getDistanceToSession() {
+export function getDistanceToSession(activeSession, userLocation) {
   if (!activeSession || !userLocation) return null;
 
   const R = 6371e3;
