@@ -16,7 +16,7 @@ import { useAuth } from "../context/AuthContext";
 
 const { width, height } = Dimensions.get("window");
 
-const LoginScreen = () => {
+function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -115,7 +115,7 @@ const LoginScreen = () => {
       </LinearGradient>
     </View>
   );
-};
+}
 
 export default LoginScreen;
 
