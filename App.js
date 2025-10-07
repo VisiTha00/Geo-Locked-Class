@@ -7,7 +7,7 @@ import * as Notifications from "expo-notifications";
 
 import SplashScreen from "./src/screens/SplashScreen";
 import LoginScreen from "./src/screen/loginScreen";
-import TeacherDashboard from "./src/screens/TeacherDashboard";
+import TeacherDashboard from "./src/screen/teacherDashboard";
 import StudentDashboard from "./src/screen/studentDashboard";
 import SessionScreen from "./src/screens/SessionScreen";
 import SessionCreationScreen from "./src/screens/SessionCreationScreen";
