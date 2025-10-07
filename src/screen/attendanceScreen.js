@@ -8,7 +8,6 @@ import {
   ActivityIndicator,
   ScrollView,
   StatusBar,
-  Dimensions,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEnhancedSession } from "../context/EnhancedSessionContext";
