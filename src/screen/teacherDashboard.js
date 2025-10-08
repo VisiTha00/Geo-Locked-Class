@@ -248,12 +248,6 @@ function TeacherDashboard({ navigation }) {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.viewSessionButton}
-                onPress={() => navigation.navigate("SessionScreen")}
-              >
-                <Text style={styles.viewSessionButtonText}>View Session</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
                 style={styles.reportButton}
                 onPress={() =>
                   navigation.navigate("Reporting", {
