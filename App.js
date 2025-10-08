@@ -12,7 +12,7 @@ import StudentDashboard from "./src/screen/studentDashboard";
 import SessionScreen from "./src/screens/SessionScreen";
 import SessionCreationScreen from "./src/screens/SessionCreationScreen";
 import AttendanceScreen from "./src/screen/attendanceScreen";
-import VotingScreen from "./src/screens/VotingScreen";
+import VotingScreen from "./src/screen/votingScreen";
 import QuizScreen from "./src/screens/QuizScreen";
 import ReportingScreen from "./src/screens/ReportingScreen";
 import QuizSettingsScreen from "./src/screens/QuizSettingsScreen";
