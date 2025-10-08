@@ -520,6 +520,17 @@ function QuizScreen({ navigation }) {
               </TouchableOpacity>
             </View>
           )}
+
+          <View style={styles.helpCard}>
+            <Text style={styles.helpTitle}>Quiz Instructions</Text>
+            <Text style={styles.helpText}>
+              • Answer all questions before submitting{"\n"}• You must be within{" "}
+              {activeSession.location?.radius || 20}m of the teacher{"\n"}•
+              Submit before time expires{"\n"}• Stay focused - switching apps
+              may result in penalties{"\n"}• Use Previous/Next buttons to
+              navigate between questions
+            </Text>
+          </View>
         </View>
       </ScrollView>
     </View>
