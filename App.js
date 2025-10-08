@@ -13,7 +13,7 @@ import SessionScreen from "./src/screens/SessionScreen";
 import SessionCreationScreen from "./src/screens/SessionCreationScreen";
 import AttendanceScreen from "./src/screen/attendanceScreen";
 import VotingScreen from "./src/screen/votingScreen";
-import QuizScreen from "./src/screens/QuizScreen";
+import QuizScreen from "./src/screen/quizScreen";
 import ReportingScreen from "./src/screens/ReportingScreen";
 import QuizSettingsScreen from "./src/screens/QuizSettingsScreen";
 import SessionEditScreen from "./src/screens/SessionEditScreen";
