@@ -248,6 +248,12 @@ function TeacherDashboard({ navigation }) {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
+                style={styles.viewSessionButton}
+                onPress={() => navigation.navigate("SessionScreen")}
+              >
+                <Text style={styles.viewSessionButtonText}>View Session</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
                 style={styles.reportButton}
                 onPress={() =>
                   navigation.navigate("Reporting", {
@@ -256,6 +262,12 @@ function TeacherDashboard({ navigation }) {
                 }
               >
                 <Text style={styles.reportButtonText}>Generate Report</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.editButton}
+                onPress={() => navigation.navigate("SessionEdit")}
+              >
+                <Text style={styles.editButtonText}>Edit Session</Text>
               </TouchableOpacity>
             </View>
           ) : (
@@ -273,6 +285,30 @@ function TeacherDashboard({ navigation }) {
               )}
             </TouchableOpacity>
           )}
+        </View>
+
+        {user && user.email === process.env.ADMIN_EMAIL && (
+          <View style={styles.actionCard}>
+            <TouchableOpacity
+              style={styles.userManagementButton}
+              onPress={() => navigation.navigate("UserManagement")}
+            >
+              <Text style={styles.userManagementButtonText}>Manage Users</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        <View style={styles.infoCard}>
+          <Text style={styles.infoTitle}>Session Information</Text>
+          <Text style={styles.infoText}>
+            • Students within a certain radius can join the session
+          </Text>
+          <Text style={styles.infoText}>
+            • Students outside the radius will receive notifications
+          </Text>
+          <Text style={styles.infoText}>
+            • Location permission is required to start sessions
+          </Text>
         </View>
       </ScrollView>
     </View>
