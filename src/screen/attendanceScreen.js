@@ -248,6 +248,28 @@ function AttendanceScreen({ navigation }) {
             </View>
           </View>
 
+          <View style={styles.requirementsCard}>
+            <Text style={styles.requirementsTitle}>Requirements</Text>
+            <View style={styles.requirementItem}>
+              <Text style={styles.requirementIcon}>📍</Text>
+              <Text style={styles.requirementText}>
+                Be within {activeSession.location.radius}m of the teacher
+              </Text>
+            </View>
+            <View style={styles.requirementItem}>
+              <Text style={styles.requirementIcon}>⏰</Text>
+              <Text style={styles.requirementText}>
+                Mark attendance before time expires
+              </Text>
+            </View>
+            <View style={styles.requirementItem}>
+              <Text style={styles.requirementIcon}>📱</Text>
+              <Text style={styles.requirementText}>
+                Keep location services enabled
+              </Text>
+            </View>
+          </View>
+
           {hasSubmitted ? (
             <View style={styles.submittedCard}>
               <Text style={styles.submittedIcon}>✅</Text>
@@ -273,14 +295,14 @@ function AttendanceScreen({ navigation }) {
                     style={[
                       styles.submitButtonText,
                       (!canSubmit() || isSubmitting) &&
-                        styles.submitButtonTextDisabled,
+                      styles.submitButtonTextDisabled,
                     ]}
                   >
                     {isSessionExpired()
                       ? "Session Expired"
                       : !isInRange
-                      ? "Move Closer to Mark Attendance"
-                      : "Mark Attendance"}
+                        ? "Move Closer to Mark Attendance"
+                        : "Mark Attendance"}
                   </Text>
                 )}
               </TouchableOpacity>
