@@ -10,13 +10,12 @@ import {
 import { useAuth } from "../context/AuthContext";
 import { useEnhancedSession } from "../context/EnhancedSessionContext";
 
-const SessionScreen = ({ navigation }) => {
+function SessionScreen ({ navigation }) {
   const { user } = useAuth();
   const {
     activeSession,
     endSession,
     isSessionActive,
-    getSessionTimeRemaining,
   } = useEnhancedSession();
   const [sessionTime, setSessionTime] = useState("00:00:00");
 
@@ -24,12 +23,11 @@ const SessionScreen = ({ navigation }) => {
     let interval;
     if (isSessionActive && activeSession && activeSession.startedAt) {
       interval = setInterval(() => {
-        // Calculate time remaining directly from session data
         const now = Date.now();
         const startTime = new Date(activeSession.startedAt).getTime();
-        const timeLimit = activeSession.timeLimit * 1000; // Convert to milliseconds
+        const timeLimit = activeSession.timeLimit * 1000; 
         const endTime = startTime + timeLimit;
-        const remaining = Math.max(0, Math.floor((endTime - now) / 1000)); // Convert back to seconds
+        const remaining = Math.max(0, Math.floor((endTime - now) / 1000));
 
         const hours = Math.floor(remaining / 3600);
         const minutes = Math.floor((remaining % 3600) / 60);
@@ -50,7 +48,7 @@ const SessionScreen = ({ navigation }) => {
     };
   }, [isSessionActive, activeSession]);
 
-  const handleEndSession = () => {
+  function handleEndSession () {
     if (!user || user.role !== "teacher") {
       Alert.alert("Access Denied", "Only teachers can end sessions.");
       return;
@@ -73,7 +71,7 @@ const SessionScreen = ({ navigation }) => {
     ]);
   };
 
-  const handleLeaveSession = () => {
+  function handleLeaveSession() {
     Alert.alert(
       "Leave Session",
       "Are you sure you want to leave this session?",
