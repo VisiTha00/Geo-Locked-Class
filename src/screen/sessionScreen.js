@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import { useAuth } from "../context/AuthContext";
-import { useEnhancedSession } from "../context/EnhancedSessionContext";
+import { useSession } from "../context/sessionContext";
 
 function SessionScreen ({ navigation }) {
   const { user } = useAuth();
@@ -16,7 +16,7 @@ function SessionScreen ({ navigation }) {
     activeSession,
     endSession,
     isSessionActive,
-  } = useEnhancedSession();
+  } = useSession();
   const [sessionTime, setSessionTime] = useState("00:00:00");
 
   useEffect(() => {

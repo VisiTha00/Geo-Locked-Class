@@ -12,12 +12,12 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
 import { useAuth } from "../context/AuthContext";
-import { useEnhancedSession } from "../context/EnhancedSessionContext";
+import { useSession } from "../context/sessionContext";
 
 function TeacherDashboard({ navigation }) {
   const { user, logout } = useAuth();
   const { activeSession, isSessionActive, endSession, userLocation } =
-    useEnhancedSession();
+    useSession();
   const [loading, setLoading] = useState(false);
   const [locationPermission, setLocationPermission] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(0);

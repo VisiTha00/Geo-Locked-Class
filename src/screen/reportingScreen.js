@@ -9,12 +9,12 @@ import {
   ScrollView,
   FlatList,
 } from "react-native";
-import { useEnhancedSession } from "../context/EnhancedSessionContext";
+import { useSession } from "../context/sessionContext";
 import reportingService from "../services/ReportingService";
-import enhancedFirebaseService from "../services/EnhancedFirebaseService";
+import FirebaseService from "../services/firebaseService";
 
 function ReportingScreen({ navigation, route }) {
-  const { activeSession } = useEnhancedSession();
+  const { activeSession } = useSession();
   const { sessionId } = route.params || {};
 
   const [sessionData, setSessionData] = useState(null);
@@ -31,7 +31,7 @@ function ReportingScreen({ navigation, route }) {
   async function loadSessionData(){
     setIsLoading(true);
     try {
-      const data = await enhancedFirebaseService.getSessionReportData(
+      const data = await FirebaseService.getSessionReportData(
         sessionId || activeSession?.id
       );
       if (data && data.session) {

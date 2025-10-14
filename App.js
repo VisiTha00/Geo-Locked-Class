@@ -9,20 +9,19 @@ import SplashScreen from "./src/screens/SplashScreen";
 import LoginScreen from "./src/screen/loginScreen";
 import TeacherDashboard from "./src/screen/teacherDashboard";
 import StudentDashboard from "./src/screen/studentDashboard";
-import SessionScreen from "./src/screens/SessionScreen";
-import SessionCreationScreen from "./src/screens/SessionCreationScreen";
+import SessionScreen from "./src/screen/sessionScreen";
+import SessionCreationScreen from "./src/screen/sessionCreationScreen";
 import AttendanceScreen from "./src/screen/attendanceScreen";
 import VotingScreen from "./src/screen/votingScreen";
 import QuizScreen from "./src/screen/quizScreen";
-import ReportingScreen from "./src/screens/ReportingScreen";
+import ReportingScreen from "./src/screen/reportingScreen";
 import QuizSettingsScreen from "./src/screens/QuizSettingsScreen";
 import SessionEditScreen from "./src/screens/SessionEditScreen";
 import UserManagementScreen from "./src/screens/UserManagementScreen";
 
 // Import context
 import { AuthProvider, useAuth } from "./src/context/AuthContext";
-import { SessionProvider } from "./src/context/SessionContext";
-import { EnhancedSessionProvider } from "./src/context/EnhancedSessionContext";
+import { SessionProvider } from "./src/context/sessionContext";
 
 const Stack = createStackNavigator();
 
@@ -107,12 +106,12 @@ export default function App() {
 
   return (
     <AuthProvider>
-      <EnhancedSessionProvider>
+      <SessionProvider>
         <View style={styles.container}>
           <StatusBar style="auto" />
           <AppNavigator />
         </View>
-      </EnhancedSessionProvider>
+      </SessionProvider>
     </AuthProvider>
   );
 }

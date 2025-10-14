@@ -10,7 +10,7 @@ import {
   StatusBar,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useEnhancedSession } from "../context/EnhancedSessionContext";
+import { useSession } from "../context/sessionContext";
 import { useAuth } from "../context/AuthContext";
 import { formatTime, getDistanceToSession } from "../helper/helperFunctions";
 
@@ -27,7 +27,7 @@ function QuizScreen({ navigation }) {
     getQuizIntegrityReport,
     getQuizWarningCount,
     resetQuizWarnings,
-  } = useEnhancedSession();
+  } = useSession();
   const { user } = useAuth();
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
