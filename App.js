@@ -21,8 +21,7 @@ import UserManagementScreen from "./src/screens/UserManagementScreen";
 
 // Import context
 import { AuthProvider, useAuth } from "./src/context/AuthContext";
-import { SessionProvider } from "./src/context/SessionContext";
-import { EnhancedSessionProvider } from "./src/context/EnhancedSessionContext";
+import { SessionProvider } from "./src/context/sessionContext";
 
 const Stack = createStackNavigator();
 
@@ -107,12 +106,12 @@ export default function App() {
 
   return (
     <AuthProvider>
-      <EnhancedSessionProvider>
+      <SessionProvider>
         <View style={styles.container}>
           <StatusBar style="auto" />
           <AppNavigator />
         </View>
-      </EnhancedSessionProvider>
+      </SessionProvider>
     </AuthProvider>
   );
 }

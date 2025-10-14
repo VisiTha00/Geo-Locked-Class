@@ -13,7 +13,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
 import * as Notifications from "expo-notifications";
 import { useAuth } from "../context/AuthContext";
-import { useEnhancedSession } from "../context/EnhancedSessionContext";
+import { useSession } from "../context/sessionContext";
 import { getDistanceToSession } from "../helper/helperFunctions";
 
 function StudentDashboard({ navigation }) {
@@ -27,7 +27,7 @@ function StudentDashboard({ navigation }) {
     forceRangeCheck,
     isSubmitted,
     isSessionExpired,
-  } = useEnhancedSession();
+  } = useSession();
   const [loading, setLoading] = useState(false);
   const [setLocationPermission] = useState(false);
   const [lastChecked, setLastChecked] = useState(null);
