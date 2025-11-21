@@ -11,7 +11,7 @@ import {
   StatusBar,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/authContext";
 
 function LoginScreen() {
   const [email, setEmail] = useState("");

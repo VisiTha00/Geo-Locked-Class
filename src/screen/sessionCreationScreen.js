@@ -9,18 +9,18 @@ import {
   Alert,
   Switch,
 } from "react-native";
-import { SESSION_TYPES } from "../models/SessionTypes";
-import { useEnhancedSession } from "../context/EnhancedSessionContext";
+import { SESSION_TYPES } from "../types/sessionTypes";
+import { useSession } from "../context/sessionContext";
 import { useAuth } from "../context/authContext";
 
 const SessionCreationScreen = ({ navigation }) => {
-  const { createSession, userLocation } = useEnhancedSession();
+  const { createSession, userLocation } = useSession();
   const { user } = useAuth();
   const [sessionType, setSessionType] = useState(SESSION_TYPES.ATTENDANCE);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [timeLimit, setTimeLimit] = useState(5); 
-  const [radius, setRadius] = useState(20); 
+  const [timeLimit, setTimeLimit] = useState(5);
+  const [radius, setRadius] = useState(20);
 
   const [questions, setQuestions] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState("");
@@ -68,7 +68,7 @@ const SessionCreationScreen = ({ navigation }) => {
         longitude: userLocation.longitude,
         radius: finalRadius,
       },
-      timeLimit: finalTimeLimit * 60, 
+      timeLimit: finalTimeLimit * 60,
       settings: {},
     };
 
@@ -408,7 +408,6 @@ const SessionCreationScreen = ({ navigation }) => {
     </ScrollView>
   );
 };
-
 
 export default SessionCreationScreen;
 
