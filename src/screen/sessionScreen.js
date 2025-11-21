@@ -7,16 +7,12 @@ import {
   Alert,
   ScrollView,
 } from "react-native";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/authContext";
 import { useSession } from "../context/sessionContext";
 
-function SessionScreen ({ navigation }) {
+function SessionScreen({ navigation }) {
   const { user } = useAuth();
-  const {
-    activeSession,
-    endSession,
-    isSessionActive,
-  } = useSession();
+  const { activeSession, endSession, isSessionActive } = useSession();
   const [sessionTime, setSessionTime] = useState("00:00:00");
 
   useEffect(() => {
@@ -25,7 +21,7 @@ function SessionScreen ({ navigation }) {
       interval = setInterval(() => {
         const now = Date.now();
         const startTime = new Date(activeSession.startedAt).getTime();
-        const timeLimit = activeSession.timeLimit * 1000; 
+        const timeLimit = activeSession.timeLimit * 1000;
         const endTime = startTime + timeLimit;
         const remaining = Math.max(0, Math.floor((endTime - now) / 1000));
 
@@ -48,7 +44,7 @@ function SessionScreen ({ navigation }) {
     };
   }, [isSessionActive, activeSession]);
 
-  function handleEndSession () {
+  function handleEndSession() {
     if (!user || user.role !== "teacher") {
       Alert.alert("Access Denied", "Only teachers can end sessions.");
       return;
@@ -69,7 +65,7 @@ function SessionScreen ({ navigation }) {
         },
       },
     ]);
-  };
+  }
 
   function handleLeaveSession() {
     Alert.alert(
@@ -86,7 +82,7 @@ function SessionScreen ({ navigation }) {
         },
       ]
     );
-  };
+  }
 
   if (!isSessionActive || !activeSession) {
     return (
@@ -247,7 +243,7 @@ function SessionScreen ({ navigation }) {
       </View>
     </ScrollView>
   );
-};
+}
 
 export default SessionScreen;
 

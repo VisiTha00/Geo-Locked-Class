@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSession } from "../context/sessionContext";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/authContext";
 import { formatTime, getDistanceToSession } from "../helper/helperFunctions";
 
 function VotingScreen({ navigation }) {
@@ -41,9 +41,9 @@ function VotingScreen({ navigation }) {
 
       const now = Date.now();
       const startTime = new Date(activeSession.startedAt).getTime();
-      const timeLimit = activeSession.timeLimit * 1000; 
+      const timeLimit = activeSession.timeLimit * 1000;
       const endTime = startTime + timeLimit;
-      const remaining = Math.max(0, Math.floor((endTime - now) / 1000)); 
+      const remaining = Math.max(0, Math.floor((endTime - now) / 1000));
 
       setTimeRemaining(remaining);
 
@@ -75,7 +75,7 @@ function VotingScreen({ navigation }) {
     }
   }, [isSessionActive, activeSession, hasVoted]);
 
-  function handleOptionSelect (optionIndex) {
+  function handleOptionSelect(optionIndex) {
     if (!activeSession) return;
 
     if (activeSession.allowMultipleChoice) {
@@ -87,7 +87,7 @@ function VotingScreen({ navigation }) {
     } else {
       setSelectedOptions([optionIndex]);
     }
-  };
+  }
 
   async function handleSubmitVote() {
     if (!canSubmit()) {
@@ -138,8 +138,7 @@ function VotingScreen({ navigation }) {
     } finally {
       setIsSubmitting(false);
     }
-  };
-
+  }
 
   if (!activeSession) {
     return (
@@ -281,8 +280,10 @@ function VotingScreen({ navigation }) {
               <View style={styles.locationInfo}>
                 <Text style={styles.locationLabel}>Distance to Session:</Text>
                 <Text style={styles.locationText}>
-                  {getDistanceToSession(activeSession,userLocation)?.toFixed(1)}m /{" "}
-                  {activeSession.location.radius}m
+                  {getDistanceToSession(activeSession, userLocation)?.toFixed(
+                    1
+                  )}
+                  m / {activeSession.location.radius}m
                 </Text>
               </View>
             )}
@@ -358,7 +359,7 @@ function VotingScreen({ navigation }) {
       </ScrollView>
     </View>
   );
-};
+}
 
 export default VotingScreen;
 

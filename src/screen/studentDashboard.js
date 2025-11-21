@@ -12,7 +12,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
 import * as Notifications from "expo-notifications";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/authContext";
 import { useSession } from "../context/sessionContext";
 import { getDistanceToSession } from "../helper/helperFunctions";
 

@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSession } from "../context/sessionContext";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/authContext";
 import { formatTime, getDistanceToSession } from "../helper/helperFunctions";
 
 function AttendanceScreen({ navigation }) {
@@ -273,14 +273,14 @@ function AttendanceScreen({ navigation }) {
                     style={[
                       styles.submitButtonText,
                       (!canSubmit() || isSubmitting) &&
-                      styles.submitButtonTextDisabled,
+                        styles.submitButtonTextDisabled,
                     ]}
                   >
                     {isSessionExpired()
                       ? "Session Expired"
                       : !isInRange
-                        ? "Move Closer to Mark Attendance"
-                        : "Mark Attendance"}
+                      ? "Move Closer to Mark Attendance"
+                      : "Mark Attendance"}
                   </Text>
                 )}
               </TouchableOpacity>
