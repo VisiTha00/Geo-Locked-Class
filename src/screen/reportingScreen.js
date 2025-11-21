@@ -10,8 +10,8 @@ import {
   FlatList,
 } from "react-native";
 import { useSession } from "../context/sessionContext";
-import reportingService from "../services/ReportingService";
-import FirebaseService from "../services/firebaseService";
+import reportingService from "../service/ReportingService";
+import FirebaseService from "../service/firebaseService";
 
 function ReportingScreen({ navigation, route }) {
   const { activeSession } = useSession();
@@ -28,7 +28,7 @@ function ReportingScreen({ navigation, route }) {
     loadReports();
   }, []);
 
-  async function loadSessionData(){
+  async function loadSessionData() {
     setIsLoading(true);
     try {
       const data = await FirebaseService.getSessionReportData(
@@ -55,9 +55,9 @@ function ReportingScreen({ navigation, route }) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
-  async function loadReports () {
+  async function loadReports() {
     setIsLoadingReports(true);
     try {
       const result = await reportingService.getReportList();
@@ -68,7 +68,7 @@ function ReportingScreen({ navigation, route }) {
     } finally {
       setIsLoadingReports(false);
     }
-  };
+  }
 
   async function generateCSVReport() {
     if (!sessionData) {
@@ -90,7 +90,7 @@ function ReportingScreen({ navigation, route }) {
             { text: "OK" },
           ]
         );
-        loadReports(); 
+        loadReports();
       } else {
         Alert.alert("Error", result.error || "Failed to generate report");
       }
@@ -99,9 +99,9 @@ function ReportingScreen({ navigation, route }) {
     } finally {
       setIsGenerating(false);
     }
-  };
+  }
 
-  async function generatePDFReport () {
+  async function generatePDFReport() {
     if (!sessionData) {
       Alert.alert("Error", "No session data available");
       return;
@@ -133,9 +133,9 @@ function ReportingScreen({ navigation, route }) {
     } finally {
       setIsGenerating(false);
     }
-  };
+  }
 
-  async function shareReport (filepath, filename) {
+  async function shareReport(filepath, filename) {
     try {
       const result = await reportingService.shareReport(filepath, filename);
       if (!result.success) {
@@ -144,9 +144,9 @@ function ReportingScreen({ navigation, route }) {
     } catch (error) {
       Alert.alert("Error", "Failed to share report");
     }
-  };
+  }
 
-  async function deleteReport (filepath) {
+  async function deleteReport(filepath) {
     Alert.alert(
       "Delete Report",
       "Are you sure you want to delete this report?",
@@ -170,9 +170,9 @@ function ReportingScreen({ navigation, route }) {
         },
       ]
     );
-  };
+  }
 
-  async function clearAllReports () {
+  async function clearAllReports() {
     Alert.alert(
       "Clear All Reports",
       "Are you sure you want to delete all reports?",
@@ -197,9 +197,9 @@ function ReportingScreen({ navigation, route }) {
         },
       ]
     );
-  };
+  }
 
-  function renderSessionSummary () {
+  function renderSessionSummary() {
     if (!sessionData) return null;
 
     const { session, attendance, voting, quiz } = sessionData;
@@ -293,7 +293,7 @@ function ReportingScreen({ navigation, route }) {
         )}
       </View>
     );
-  };
+  }
 
   const renderReportItem = ({ item }) => (
     <View style={styles.reportItem}>
@@ -418,7 +418,7 @@ function ReportingScreen({ navigation, route }) {
       </View>
     </ScrollView>
   );
-};
+}
 
 export default ReportingScreen;
 

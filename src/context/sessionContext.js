@@ -7,22 +7,17 @@ import React, {
 } from "react";
 import * as Notifications from "expo-notifications";
 import * as Location from "expo-location";
-import FirebaseService from "../services/firebaseService";
-import offlineStorageService from "../services/OfflineStorageService";
-import appFocusService from "../services/AppFocusService";
-import {
-  SESSION_STATUS,
-  SUBMISSION_STATUS
-} from "../types/sessionTypes";
+import FirebaseService from "../service/firebaseService";
+import offlineStorageService from "../service/OfflineStorageService";
+import appFocusService from "../service/AppFocusService";
+import { SESSION_STATUS, SUBMISSION_STATUS } from "../types/sessionTypes";
 
 const SessionContext = createContext();
 
 export const useSession = () => {
   const context = useContext(SessionContext);
   if (!context) {
-    throw new Error(
-      "useSession must be used within a SessionProvider"
-    );
+    throw new Error("useSession must be used within a SessionProvider");
   }
   return context;
 };
@@ -45,8 +40,8 @@ export const SessionProvider = ({ children }) => {
         setActiveSession(session);
         setSessionLocation(session.location);
         setIsSessionActive(true);
-        setSessionExpired(false); 
-        setHasSubmitted(false); 
+        setSessionExpired(false);
+        setHasSubmitted(false);
         startSessionTimer(session);
       } else {
         console.log("Clearing active session");
@@ -113,8 +108,8 @@ export const SessionProvider = ({ children }) => {
       Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.High,
-          timeInterval: 3000, 
-          distanceInterval: 3, 
+          timeInterval: 3000,
+          distanceInterval: 3,
         },
         (location) => {
           console.log("Location updated:", location.coords);
@@ -174,7 +169,7 @@ export const SessionProvider = ({ children }) => {
 
     const timer = setInterval(() => {
       const now = Date.now();
-      const remaining = Math.max(0, Math.floor((endTime - now) / 1000)); 
+      const remaining = Math.max(0, Math.floor((endTime - now) / 1000));
 
       if (remaining % 10 === 0 || remaining <= 10) {
         console.log("Timer update:", {
@@ -304,9 +299,7 @@ export const SessionProvider = ({ children }) => {
 
   const updateSession = async (updatedSessionData) => {
     try {
-      const result = await FirebaseService.updateSession(
-        updatedSessionData
-      );
+      const result = await FirebaseService.updateSession(updatedSessionData);
       if (result.success) {
         // Update local session state
         setActiveSession(updatedSessionData);
@@ -357,9 +350,7 @@ export const SessionProvider = ({ children }) => {
         return result;
       } else {
         // Submit directly to Firebase
-        const result = await FirebaseService.submitAttendance(
-          attendanceData
-        );
+        const result = await FirebaseService.submitAttendance(attendanceData);
 
         // Submission completed successfully
         if (result.success) {
@@ -713,8 +704,6 @@ export const SessionProvider = ({ children }) => {
   };
 
   return (
-    <SessionContext.Provider value={value}>
-      {children}
-    </SessionContext.Provider>
+    <SessionContext.Provider value={value}>{children}</SessionContext.Provider>
   );
 };
