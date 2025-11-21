@@ -329,6 +329,6 @@ class FirebaseService {
   }
 }
 
-const FirebaseService = new FirebaseService();
+const firebaseService = new FirebaseService();
 
-export default FirebaseService;
+export default firebaseService;

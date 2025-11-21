@@ -8,7 +8,7 @@ import React, {
 import * as Notifications from "expo-notifications";
 import * as Location from "expo-location";
 import FirebaseService from "../service/firebaseService";
-import offlineStorageService from "../service/OfflineStorageService";
+import offlineStorageService from "../service/offlineStorageService";
 import appFocusService from "../service/appFocusService";
 import { SESSION_STATUS, SUBMISSION_STATUS } from "../types/sessionTypes";
 

@@ -128,7 +128,7 @@ The app uses high-accuracy GPS positioning with the following features:
 
 The app uses `Location.Accuracy.High` for maximum GPS accuracy. You can modify this in:
 
-- `src/screens/TeacherDashboard.js` (line ~45)
+- `src/screen/TeacherDashboard.js` (line ~45)
 - `src/screens/StudentDashboard.js` (line ~45)
 
 ### Session Radius

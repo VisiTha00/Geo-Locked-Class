@@ -10,7 +10,7 @@ import {
   FlatList,
 } from "react-native";
 import { useSession } from "../context/sessionContext";
-import reportingService from "../service/ReportingService";
+import reportingService from "../service/reportingService";
 import FirebaseService from "../service/firebaseService";
 
 function ReportingScreen({ navigation, route }) {

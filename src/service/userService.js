@@ -154,11 +154,11 @@ class UserService {
       const user = await this.getUserByEmail(email);
 
       if (!user) {
-        return { success: false, error: "User not found" };
+        return { success: false, error: "Invalid email or password" };
       }
 
       if (user.password !== password) {
-        return { success: false, error: "Invalid password" };
+        return { success: false, error: "Invalid email or password" };
       }
       const { password: _, ...userWithoutPassword } = user;
       return {
