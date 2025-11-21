@@ -20,7 +20,7 @@ import {
   AttendanceSubmission,
   VoteSubmission,
   QuizSubmission,
-} from "../models/SessionTypes";
+} from "../types/sessionTypes";
 
 class FirebaseService {
   constructor() {

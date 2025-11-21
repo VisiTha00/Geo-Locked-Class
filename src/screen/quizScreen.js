@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSession } from "../context/sessionContext";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/authContext";
 import { formatTime, getDistanceToSession } from "../helper/helperFunctions";
 
 function QuizScreen({ navigation }) {
@@ -47,7 +47,7 @@ function QuizScreen({ navigation }) {
       }
       const now = Date.now();
       const startTime = new Date(activeSession.startedAt).getTime();
-      const timeLimit = activeSession.timeLimit * 1000; 
+      const timeLimit = activeSession.timeLimit * 1000;
       const endTime = startTime + timeLimit;
       const remaining = Math.max(0, Math.floor((endTime - now) / 1000));
 
@@ -72,7 +72,7 @@ function QuizScreen({ navigation }) {
       return;
     }
     await handleSubmitQuiz(true);
-  };
+  }
 
   useEffect(() => {
     if (
@@ -83,13 +83,13 @@ function QuizScreen({ navigation }) {
     ) {
       startQuizMonitoring("quiz_session", handleAutoSubmit);
       setQuestionStartTime(Date.now());
-      resetQuizWarnings(); 
+      resetQuizWarnings();
     }
 
     return () => {
       stopQuizMonitoring();
     };
-  }, [activeSession]); 
+  }, [activeSession]);
 
   useEffect(() => {
     if (activeSession && activeSession.type === "quiz") {
@@ -108,12 +108,12 @@ function QuizScreen({ navigation }) {
           [{ text: "OK", onPress: () => setShowIntegrityWarning(false) }]
         );
       }
-    }, 5000); 
+    }, 5000);
 
     return () => clearInterval(integrityCheck);
   }, [showIntegrityWarning, hasSubmitted]);
 
-  function handleAnswerSelect (questionId, answer) {
+  function handleAnswerSelect(questionId, answer) {
     const timeSpent = Date.now() - questionStartTime;
     setAnswers((prev) => {
       const newAnswers = {
@@ -126,9 +126,9 @@ function QuizScreen({ navigation }) {
       };
       return newAnswers;
     });
-  };
+  }
 
-  function handleNextQuestion () {
+  function handleNextQuestion() {
     if (
       activeSession.questions &&
       currentQuestionIndex < activeSession.questions.length - 1
@@ -136,16 +136,16 @@ function QuizScreen({ navigation }) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setQuestionStartTime(Date.now());
     }
-  };
+  }
 
-  function handlePreviousQuestion () {
+  function handlePreviousQuestion() {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
       setQuestionStartTime(Date.now());
     }
-  };
+  }
 
-  async function handleSubmitQuiz (isAutoSubmit = false){
+  async function handleSubmitQuiz(isAutoSubmit = false) {
     if (hasSubmitted) {
       return;
     }
@@ -183,7 +183,7 @@ function QuizScreen({ navigation }) {
     }
 
     submitQuizAnswers();
-  };
+  }
 
   async function submitQuizAnswers() {
     setIsSubmitting(true);
@@ -230,7 +230,7 @@ function QuizScreen({ navigation }) {
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }
 
   if (!activeSession) {
     return (
@@ -380,7 +380,9 @@ function QuizScreen({ navigation }) {
                       currentAnswer?.answer === option &&
                         styles.optionButtonSelected,
                     ]}
-                    onPress={() => {handleAnswerSelect(currentQuestion.id, option)}}
+                    onPress={() => {
+                      handleAnswerSelect(currentQuestion.id, option);
+                    }}
                   >
                     <View style={styles.optionContent}>
                       <View
@@ -475,8 +477,10 @@ function QuizScreen({ navigation }) {
               <View style={styles.locationInfo}>
                 <Text style={styles.locationLabel}>Distance to Session:</Text>
                 <Text style={styles.locationText}>
-                  {getDistanceToSession(activeSession,userLocation)?.toFixed(1)}m /{" "}
-                  {activeSession.location.radius}m
+                  {getDistanceToSession(activeSession, userLocation)?.toFixed(
+                    1
+                  )}
+                  m / {activeSession.location.radius}m
                 </Text>
               </View>
             )}
@@ -535,7 +539,7 @@ function QuizScreen({ navigation }) {
       </ScrollView>
     </View>
   );
-};
+}
 
 export default QuizScreen;
 
