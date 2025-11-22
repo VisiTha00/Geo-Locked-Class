@@ -136,7 +136,7 @@ The app uses `Location.Accuracy.High` for maximum GPS accuracy. You can modify t
 The default session radius is 20 meters. You can change this in:
 
 - `src/context/SessionContext.js` (line ~15)
-- `src/screens/TeacherDashboard.js` (line ~60)
+- `src/screen/TeacherDashboard.js` (line ~60)
 
 ## Troubleshooting
 
