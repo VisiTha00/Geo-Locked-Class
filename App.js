@@ -5,7 +5,7 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import * as Notifications from "expo-notifications";
 
-import SplashScreen from "./src/screens/SplashScreen";
+import SplashScreen from "./src/screen/splashScreen";
 import LoginScreen from "./src/screen/loginScreen";
 import TeacherDashboard from "./src/screen/teacherDashboard";
 import StudentDashboard from "./src/screen/studentDashboard";
@@ -15,17 +15,14 @@ import AttendanceScreen from "./src/screen/attendanceScreen";
 import VotingScreen from "./src/screen/votingScreen";
 import QuizScreen from "./src/screen/quizScreen";
 import ReportingScreen from "./src/screen/reportingScreen";
-import QuizSettingsScreen from "./src/screens/QuizSettingsScreen";
-import SessionEditScreen from "./src/screens/SessionEditScreen";
-import UserManagementScreen from "./src/screens/UserManagementScreen";
+import SessionEditScreen from "./src/screen/sessionEditScreen";
+import UserManagementScreen from "./src/screen/userManagementScreen";
 
-// Import context
-import { AuthProvider, useAuth } from "./src/context/AuthContext";
+import { AuthProvider, useAuth } from "./src/context/authContext";
 import { SessionProvider } from "./src/context/sessionContext";
 
 const Stack = createStackNavigator();
 
-// Configure notifications
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -57,7 +54,6 @@ function AppNavigator() {
               component={SessionCreationScreen}
             />
             <Stack.Screen name="Reporting" component={ReportingScreen} />
-            <Stack.Screen name="QuizSettings" component={QuizSettingsScreen} />
             <Stack.Screen name="SessionEdit" component={SessionEditScreen} />
             <Stack.Screen
               name="UserManagement"

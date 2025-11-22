@@ -20,7 +20,7 @@ import {
   AttendanceSubmission,
   VoteSubmission,
   QuizSubmission,
-} from "../models/SessionTypes";
+} from "../types/sessionTypes";
 
 class FirebaseService {
   constructor() {
@@ -329,6 +329,6 @@ class FirebaseService {
   }
 }
 
-const FirebaseService = new FirebaseService();
+const firebaseService = new FirebaseService();
 
-export default FirebaseService;
+export default firebaseService;
