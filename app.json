@@ -42,7 +42,20 @@
         "android.permission.ACCESS_FINE_LOCATION"
       ]
     },
-    "plugins": ["expo-notifications", "expo-location", "expo-font"],
+    "plugins": [
+      "expo-notifications",
+      "expo-location",
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#667eea"
+        }
+      ]
+    ],
 
     "extra": {
       "eas": {
