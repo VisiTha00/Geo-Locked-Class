@@ -4,6 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import * as Notifications from "expo-notifications";
+import * as ExpoSplashScreen from "expo-splash-screen";
 
 import SplashScreen from "./src/screen/splashScreen";
 import LoginScreen from "./src/screen/loginScreen";
@@ -77,22 +78,44 @@ function AppNavigator() {
   );
 }
 
+// Keep the native splash screen visible while we load
+ExpoSplashScreen.preventAutoHideAsync();
+
 export default function App() {
   const [notification, setNotification] = useState(false);
+  const [appIsReady, setAppIsReady] = useState(false);
 
   useEffect(() => {
-    // Request notification permissions
-    registerForPushNotificationsAsync();
+    let notificationListener;
 
-    // Listen for notifications
-    const notificationListener = Notifications.addNotificationReceivedListener(
-      (notification) => {
-        setNotification(notification);
+    async function prepare() {
+      try {
+        // Pre-load fonts, make API calls, etc.
+        await registerForPushNotificationsAsync();
+
+        // Set up notification listener
+        notificationListener = Notifications.addNotificationReceivedListener(
+          (notification) => {
+            setNotification(notification);
+          }
+        );
+
+        // Mark app as ready
+        setAppIsReady(true);
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        // Hide the native splash screen - your SplashScreen.js component will show
+        await ExpoSplashScreen.hideAsync();
       }
-    );
+    }
+
+    prepare();
 
     return () => {
-      Notifications.removeNotificationSubscription(notificationListener);
+      if (notificationListener) {
+        Notifications.removeNotificationSubscription(notificationListener);
+      }
     };
   }, []);
 
