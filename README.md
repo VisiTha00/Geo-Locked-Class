@@ -1,4 +1,4 @@
-#🎓 Geo-Locked Class - Location-Based Learning Platform
+# 🎓 Geo-Locked Class - Location-Based Learning Platform
 
 A comprehensive React Native mobile application built with Expo that enables location-based classroom sessions. Teachers can create and manage different types of sessions (Attendance, Voting, Quiz) with geo-fencing, while students can participate based on their proximity to the teacher's location.
 
@@ -125,8 +125,12 @@ A comprehensive React Native mobile application built with Expo that enables loc
    ```bash
    npx expo start
    ```
+   or
+     ```bash
+   $env:CI = $null; npx expo start
+   ```
 
-5. **Run on device**
+6. **Run on device**
    - Press `a` for Android emulator
    - Scan QR code with Expo Go app on physical device
 
