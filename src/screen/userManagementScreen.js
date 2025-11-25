@@ -30,7 +30,7 @@ const UserManagementScreen = ({ navigation }) => {
   const [role, setRole] = useState("student");
 
   useEffect(() => {
-    if (user?.email !== "admin@setup.com") {
+    if (user?.email !== process.env.EXPO_PUBLIC_ADMIN_EMAIL) {
       Alert.alert(
         "Access Denied",
         "Only the system administrator can access user management.",

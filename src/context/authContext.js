@@ -59,14 +59,17 @@ export const AuthProvider = ({ children }) => {
       console.log("Authentication failed:", authResult.error);
 
       // Check if this is a fallback login for initial setup
-      if (email === "admin@setup.com" && password === "setup123") {
+      if (
+        email === process.env.EXPO_PUBLIC_ADMIN_EMAIL &&
+        password === process.env.EXPO_PUBLIC_ADMIN_PASSWORD
+      ) {
         console.log("Using fallback login for initial setup");
 
         // Create a temporary setup user (acts as teacher with admin privileges)
         const fallbackUser = {
           id: "admin_setup",
           name: "Admin Setup",
-          email: "admin@setup.com",
+          email: process.env.EXPO_PUBLIC_ADMIN_EMAIL,
           role: "teacher",
         };
 

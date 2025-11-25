@@ -281,7 +281,7 @@ function TeacherDashboard({ navigation }) {
           )}
         </View>
 
-        {user && user.email === process.env.ADMIN_EMAIL && (
+        {user && user.email === process.env.EXPO_PUBLIC_ADMIN_EMAIL && (
           <View style={styles.actionCard}>
             <TouchableOpacity
               style={styles.userManagementButton}
