@@ -91,7 +91,7 @@ geo-locked-class/
 │       ├── TeacherDashboard.js
 │       ├── StudentDashboard.js
 │       ├── SessionScreen.js
-│       └── NotificationScreen.js
+│
 ├── package.json
 ├── app.json
 └── README.md

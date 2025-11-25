@@ -70,10 +70,6 @@ function AppNavigator() {
             <Stack.Screen name="Attendance" component={AttendanceScreen} />
             <Stack.Screen name="Voting" component={VotingScreen} />
             <Stack.Screen name="Quiz" component={QuizScreen} />
-            <Stack.Screen
-              name="NotificationScreen"
-              component={NotificationScreen}
-            />
           </>
         )}
       </Stack.Navigator>
