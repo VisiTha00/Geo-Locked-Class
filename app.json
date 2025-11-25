@@ -7,8 +7,9 @@
     "userInterfaceStyle": "light",
     "icon": "./assets/icon.png",
     "splash": {
+      "image": "./assets/icon.png",
       "backgroundColor": "#667eea",
-      "resizeMode": "native"
+      "resizeMode": "contain"
     },
     "scheme": "geo-locked-class",
     "assetBundlePatterns": ["**/*"],
@@ -17,8 +18,9 @@
       "bundleIdentifier": "com.visitha.geolockedclass",
       "icon": "./assets/icon.png",
       "splash": {
+        "image": "./assets/icon.png",
         "backgroundColor": "#667eea",
-        "resizeMode": "native"
+        "resizeMode": "contain"
       }
     },
     "android": {
@@ -30,8 +32,9 @@
         "backgroundColor": "#667eea"
       },
       "splash": {
+        "image": "./assets/icon.png",
         "backgroundColor": "#667eea",
-        "resizeMode": "native"
+        "resizeMode": "contain"
       },
       "permissions": [
         "ACCESS_FINE_LOCATION",
