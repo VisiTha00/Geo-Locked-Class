@@ -98,6 +98,37 @@ class ReportingService {
     }
   }
 
+  // Helper function to convert option indices to text (for legacy data compatibility)
+  convertVotingOptionsToText(selectedOptions, sessionOptions) {
+    if (!selectedOptions || !Array.isArray(selectedOptions)) {
+      return selectedOptions;
+    }
+
+    if (!sessionOptions || !Array.isArray(sessionOptions)) {
+      return selectedOptions;
+    }
+
+    // Check if options are already text values or indices
+    const firstOption = selectedOptions[0];
+    if (firstOption === undefined) {
+      return selectedOptions;
+    }
+
+    // If it's already a string that doesn't look like a number, return as-is
+    if (typeof firstOption === "string" && isNaN(firstOption)) {
+      return selectedOptions;
+    }
+
+    // Convert indices to option text
+    return selectedOptions.map((option) => {
+      const idx = typeof option === "string" ? parseInt(option, 10) : option;
+      if (!isNaN(idx) && idx >= 0 && idx < sessionOptions.length) {
+        return sessionOptions[idx];
+      }
+      return option; // Return as-is if conversion fails
+    });
+  }
+
   async buildCSVContent(sessionData) {
     const session = sessionData.session || sessionData;
 
@@ -145,7 +176,12 @@ class ReportingService {
         "Student ID,Student Name,Selected Options,Submitted At,Valid,Status\n";
 
       voting.forEach((vote) => {
-        const options = vote.selectedOptions.join("; ");
+        // Convert indices to option text if needed
+        const optionTexts = this.convertVotingOptionsToText(
+          vote.selectedOptions,
+          session.options
+        );
+        const options = optionTexts.join("; ");
         csv += `${vote.universityId || vote.studentId},${
           vote.studentName
         },"${options}",${new Date(vote.submittedAt).toLocaleString()},${
@@ -158,7 +194,12 @@ class ReportingService {
       const optionCounts = {};
       voting.forEach((vote) => {
         if (vote.isValid) {
-          vote.selectedOptions.forEach((option) => {
+          // Convert indices to option text if needed
+          const optionTexts = this.convertVotingOptionsToText(
+            vote.selectedOptions,
+            session.options
+          );
+          optionTexts.forEach((option) => {
             optionCounts[option] = (optionCounts[option] || 0) + 1;
           });
         }
@@ -487,11 +528,16 @@ class ReportingService {
                 : "N/A"
             }</td><td>${submission.location ? "Yes" : "No"}</td>`;
           } else if (session.type === "voting") {
+            // Convert indices to option text if needed
+            const optionTexts = this.convertVotingOptionsToText(
+              submission.selectedOptions || [],
+              session.options || []
+            );
             submissionDetails = `<td>${
               submission.submittedAt
                 ? new Date(submission.submittedAt).toLocaleString()
                 : "N/A"
-            }</td><td>${(submission.selectedOptions || []).join(", ")}</td>`;
+            }</td><td>${optionTexts.join(", ")}</td>`;
           } else if (session.type === "quiz") {
             submissionDetails = `<td>${
               submission.submittedAt
