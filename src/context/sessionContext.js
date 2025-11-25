@@ -371,12 +371,29 @@ export const SessionProvider = ({ children }) => {
       const isValid = checkLocationInRange(userLocation, sessionLocation);
       const isWithinTimeLimit = sessionTimer > 0;
 
+      // Convert option indices to actual option text values
+      let selectedOptionTexts = selectedOptions;
+      if (activeSession && activeSession.options && Array.isArray(activeSession.options)) {
+        // Check if selectedOptions contains indices (numbers) or already text values
+        const firstOption = selectedOptions[0];
+        const isIndices = typeof firstOption === 'number' || 
+                          (typeof firstOption === 'string' && /^\d+$/.test(firstOption));
+        
+        if (isIndices) {
+          // Convert indices to option text
+          selectedOptionTexts = selectedOptions.map((index) => {
+            const idx = typeof index === 'string' ? parseInt(index, 10) : index;
+            return activeSession.options[idx] || index;
+          });
+        }
+      }
+
       const voteData = {
         sessionId,
         studentId: studentData.studentId,
         studentName: studentData.studentName,
         universityId: studentData.universityId,
-        selectedOptions,
+        selectedOptions: selectedOptionTexts,
         location: userLocation,
         isValid: isValid && isWithinTimeLimit,
         status:
