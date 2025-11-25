@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   ScrollView,
   StatusBar,
+  AppState,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSession } from "../context/sessionContext";
@@ -38,6 +39,8 @@ function QuizScreen({ navigation }) {
   const [questionStartTime, setQuestionStartTime] = useState(Date.now());
   const [showIntegrityWarning, setShowIntegrityWarning] = useState(false);
   const [hasShownTimeoutAlert, setHasShownTimeoutAlert] = useState(false);
+  const lastWarnedEventCountRef = useRef(0);
+  const appStateRef = useRef(AppState.currentState);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -84,6 +87,9 @@ function QuizScreen({ navigation }) {
       startQuizMonitoring("quiz_session", handleAutoSubmit);
       setQuestionStartTime(Date.now());
       resetQuizWarnings();
+      // Reset warning tracking when quiz starts
+      lastWarnedEventCountRef.current = 0;
+      setShowIntegrityWarning(false);
     }
 
     return () => {
@@ -98,20 +104,56 @@ function QuizScreen({ navigation }) {
   }, [currentQuestionIndex]);
 
   useEffect(() => {
-    const integrityCheck = setInterval(() => {
-      const integrityReport = getQuizIntegrityReport();
-      if (integrityReport.isSuspicious && !showIntegrityWarning) {
-        setShowIntegrityWarning(true);
-        Alert.alert(
-          "Integrity Warning",
-          "Suspicious activity detected. Please stay focused on the quiz.",
-          [{ text: "OK", onPress: () => setShowIntegrityWarning(false) }]
-        );
-      }
-    }, 5000);
+    if (hasSubmitted || !activeSession) {
+      return;
+    }
 
-    return () => clearInterval(integrityCheck);
-  }, [showIntegrityWarning, hasSubmitted]);
+    // Listen for app state changes to detect when app becomes active after being in background
+    const handleAppStateChange = (nextAppState) => {
+      if (
+        appStateRef.current.match(/inactive|background/) &&
+        nextAppState === "active"
+      ) {
+        // App just became active after being in background
+        // Small delay to ensure focus events are recorded
+        setTimeout(() => {
+          // Check for new background events that haven't been warned about
+          const integrityReport = getQuizIntegrityReport();
+          const currentBackgroundEvents = integrityReport.backgroundEvents || 0;
+
+          // Only show alert if there are new background events that haven't been warned about
+          if (
+            integrityReport.isSuspicious &&
+            currentBackgroundEvents > lastWarnedEventCountRef.current
+          ) {
+            // Update the count immediately to prevent duplicate alerts
+            lastWarnedEventCountRef.current = currentBackgroundEvents;
+            setShowIntegrityWarning(true);
+            
+            Alert.alert(
+              "Integrity Warning",
+              "Suspicious activity detected. Please stay focused on the quiz.",
+              [
+                {
+                  text: "OK",
+                  onPress: () => {
+                    setShowIntegrityWarning(false);
+                  },
+                },
+              ]
+            );
+          }
+        }, 500); // Small delay to ensure events are recorded
+      }
+      appStateRef.current = nextAppState;
+    };
+
+    const subscription = AppState.addEventListener("change", handleAppStateChange);
+
+    return () => {
+      subscription?.remove();
+    };
+  }, [hasSubmitted, activeSession]);
 
   function handleAnswerSelect(questionId, answer) {
     const timeSpent = Date.now() - questionStartTime;
