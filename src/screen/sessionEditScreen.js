@@ -128,6 +128,8 @@ const SessionEditScreen = ({ navigation, route }) => {
             <Text style={styles.settingLabel}>Time Limit (minutes):</Text>
             <TextInput
               style={styles.numberInput}
+              placeholder="5"
+              placeholderTextColor="#999"
               value={timeLimit.toString()}
               onChangeText={(value) => {
                 if (value === "") {
@@ -148,6 +150,8 @@ const SessionEditScreen = ({ navigation, route }) => {
             <Text style={styles.settingLabel}>Radius (meters):</Text>
             <TextInput
               style={styles.numberInput}
+              placeholder="20"
+              placeholderTextColor="#999"
               value={radius.toString()}
               onChangeText={(value) => {
                 if (value === "") {

@@ -186,6 +186,7 @@ const SessionCreationScreen = ({ navigation }) => {
         <TextInput
           style={styles.input}
           placeholder="Enter question"
+          placeholderTextColor="#999"
           value={currentQuestion}
           onChangeText={setCurrentQuestion}
         />
@@ -196,6 +197,7 @@ const SessionCreationScreen = ({ navigation }) => {
             key={index}
             style={styles.input}
             placeholder={`Option ${index + 1}`}
+            placeholderTextColor="#999"
             value={option}
             onChangeText={(value) => {
               const newOptions = [...currentOptions];
@@ -229,6 +231,8 @@ const SessionCreationScreen = ({ navigation }) => {
           <Text style={styles.marksLabel}>Marks:</Text>
           <TextInput
             style={styles.marksInput}
+            placeholder="1"
+            placeholderTextColor="#999"
             value={currentMarks.toString()}
             onChangeText={(value) => {
               if (value === "") {
@@ -258,6 +262,7 @@ const SessionCreationScreen = ({ navigation }) => {
       <TextInput
         style={styles.input}
         placeholder="Enter voting question"
+        placeholderTextColor="#999"
         value={votingQuestion}
         onChangeText={setVotingQuestion}
         multiline
@@ -269,6 +274,7 @@ const SessionCreationScreen = ({ navigation }) => {
           <TextInput
             style={[styles.input, styles.optionInput]}
             placeholder={`Option ${index + 1}`}
+            placeholderTextColor="#999"
             value={option}
             onChangeText={(value) => updateVotingOption(index, value)}
           />
@@ -343,12 +349,14 @@ const SessionCreationScreen = ({ navigation }) => {
           <TextInput
             style={styles.input}
             placeholder="Session Title"
+            placeholderTextColor="#999"
             value={title}
             onChangeText={setTitle}
           />
           <TextInput
             style={[styles.input, styles.textArea]}
             placeholder="Description (Optional)"
+            placeholderTextColor="#999"
             value={description}
             onChangeText={setDescription}
             multiline
@@ -361,6 +369,8 @@ const SessionCreationScreen = ({ navigation }) => {
             <Text style={styles.settingLabel}>Time Limit (minutes):</Text>
             <TextInput
               style={styles.numberInput}
+              placeholder="5"
+              placeholderTextColor="#999"
               value={timeLimit.toString()}
               onChangeText={(value) => {
                 if (value === "") {
@@ -379,6 +389,8 @@ const SessionCreationScreen = ({ navigation }) => {
             <Text style={styles.settingLabel}>Radius (meters):</Text>
             <TextInput
               style={styles.numberInput}
+              placeholder="20"
+              placeholderTextColor="#999"
               value={radius.toString()}
               onChangeText={(value) => {
                 if (value === "") {

@@ -155,6 +155,7 @@ const UserManagementScreen = ({ navigation }) => {
           <TextInput
             style={styles.input}
             placeholder="Name"
+            placeholderTextColor="#999"
             value={name}
             onChangeText={setName}
           />
@@ -162,6 +163,7 @@ const UserManagementScreen = ({ navigation }) => {
           <TextInput
             style={styles.input}
             placeholder="Email"
+            placeholderTextColor="#999"
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
@@ -171,6 +173,7 @@ const UserManagementScreen = ({ navigation }) => {
           <TextInput
             style={styles.input}
             placeholder="Password"
+            placeholderTextColor="#999"
             value={password}
             onChangeText={setPassword}
             secureTextEntry
@@ -179,6 +182,7 @@ const UserManagementScreen = ({ navigation }) => {
           <TextInput
             style={styles.input}
             placeholder="University ID"
+            placeholderTextColor="#999"
             value={universityId}
             onChangeText={setUniversityId}
             autoCapitalize="characters"
