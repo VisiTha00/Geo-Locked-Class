@@ -8,12 +8,12 @@ export function getDistanceToSession(activeSession, userLocation) {
   if (!activeSession || !userLocation) return null;
 
   const earthRadius = 6371e3;
-  const userLatitudeInRadius = (userLoc.latitude * Math.PI) / 180;
-  const sessionLatitudeInRadius = (sessionLoc.latitude * Math.PI) / 180;
+  const userLatitudeInRadius = (userLocation.latitude * Math.PI) / 180;
+  const sessionLatitudeInRadius = (activeSession.latitude * Math.PI) / 180;
   const deltaLatitudeInRadius =
-    ((sessionLoc.latitude - userLoc.latitude) * Math.PI) / 180;
+    ((activeSession.latitude - userLocation.latitude) * Math.PI) / 180;
   const deltaLongitudeInRadius =
-    ((sessionLoc.longitude - userLoc.longitude) * Math.PI) / 180;
+    ((activeSession.longitude - userLocation.longitude) * Math.PI) / 180;
 
   const a =
     Math.sin(deltaLatitudeInRadius / 2) * Math.sin(deltaLatitudeInRadius / 2) +
