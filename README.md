@@ -153,7 +153,7 @@ After build completes, download from:
 
 Download the latest APK directly:
 
-- **APK Download**: [Download APK](https://expo.dev/artifacts/eas/t1MCz3adJvGW6Ytjhp42ML.apk)
+- **APK Download**: [Download APK](https://expo.dev/artifacts/eas/sAaRGRRkb9bLn2pmtNQWAg.apk)
 
 ### Test Accounts
 
@@ -230,7 +230,6 @@ Geo-Locked-Class/
 │   ├── service/
 │   │   ├── firebaseService.js     # Firebase Realtime Database operations
 │   │   ├── userService.js         # Firestore user management
-│   │   ├── offlineStorageService.js # Offline data storage
 │   │   ├── appFocusService.js     # Quiz integrity monitoring
 │   │   └── reportingService.js    # Report generation (CSV/JSON/PDF)
 │   └── types/

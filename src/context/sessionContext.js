@@ -2,7 +2,6 @@ import { createContext, useContext, useState, useEffect, useRef } from "react";
 import * as Notifications from "expo-notifications";
 import * as Location from "expo-location";
 import FirebaseService from "../service/firebaseService";
-import offlineStorageService from "../service/offlineStorageService";
 import appFocusService from "../service/appFocusService";
 import { SESSION_STATUS, SUBMISSION_STATUS } from "../types/sessionTypes";
 
@@ -336,11 +335,11 @@ export const SessionProvider = ({ children }) => {
       };
 
       if (isOffline) {
-        const result = await offlineStorageService.saveOfflineSubmission({
+        const result = {
           type: "attendance",
           data: attendanceData,
-        });
-        return result;
+        };
+        console.log(result);
       } else {
         const result = await FirebaseService.submitAttendance(attendanceData);
 
@@ -395,11 +394,11 @@ export const SessionProvider = ({ children }) => {
       };
 
       if (isOffline) {
-        const result = await offlineStorageService.saveOfflineSubmission({
+        const result = {
           type: "voting",
           data: voteData,
-        });
-        return result;
+        };
+        console.log(result);
       } else {
         const result = await FirebaseService.submitVote(voteData);
 
@@ -447,11 +446,11 @@ export const SessionProvider = ({ children }) => {
       };
 
       if (isOffline) {
-        const result = await offlineStorageService.saveOfflineSubmission({
+        const result = {
           type: "quiz",
           data: quizData,
-        });
-        return result;
+        };
+        console.log(result);
       } else {
         const result = await FirebaseService.submitQuiz(quizData);
 
@@ -543,10 +542,7 @@ export const SessionProvider = ({ children }) => {
 
   const syncOfflineData = async () => {
     try {
-      const result = await offlineStorageService.syncWithServer(
-        FirebaseService
-      );
-      return result;
+      console.log("Sync with the server.");
     } catch (error) {
       console.error("Error syncing offline data:", error);
       return { success: false, error: error.message };
