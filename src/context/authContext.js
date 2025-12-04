@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import UserService from "../service/userService";
 
@@ -38,15 +38,11 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       console.log("Attempting login for email:", email);
-
-      // First, try to authenticate using UserService
       const authResult = await UserService.authenticateUser(email, password);
 
       if (authResult.success) {
         const userData = authResult.user;
         console.log("Login successful for user:", userData);
-
-        // Store user data in AsyncStorage
         await AsyncStorage.setItem("user", JSON.stringify(userData));
         setUser(userData);
         setIsAuthenticated(true);
@@ -54,18 +50,13 @@ export const AuthProvider = ({ children }) => {
         return { success: true };
       }
 
-      // If authentication failed, check if it's because no users exist
-      // In that case, allow fallback login for initial setup
       console.log("Authentication failed:", authResult.error);
-
-      // Check if this is a fallback login for initial setup
       if (
         email === process.env.EXPO_PUBLIC_ADMIN_EMAIL &&
         password === process.env.EXPO_PUBLIC_ADMIN_PASSWORD
       ) {
         console.log("Using fallback login for initial setup");
 
-        // Create a temporary setup user (acts as teacher with admin privileges)
         const fallbackUser = {
           id: "admin_setup",
           name: "Admin Setup",

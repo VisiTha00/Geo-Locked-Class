@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useRef,
-} from "react";
+import { createContext, useContext, useState, useEffect, useRef } from "react";
 import * as Notifications from "expo-notifications";
 import * as Location from "expo-location";
 import FirebaseService from "../service/firebaseService";
@@ -249,7 +243,6 @@ export const SessionProvider = ({ children }) => {
         );
         if (startResult.success) {
           console.log("Session started successfully, sending notifications...");
-          // Send notification to teacher only (students will get notified via Firebase listener)
           await sendTeacherNotification(result.session.id, result.session.type);
           console.log("Teacher notification sent");
         } else {
@@ -268,7 +261,6 @@ export const SessionProvider = ({ children }) => {
     try {
       const result = await FirebaseService.startSession(sessionId);
       if (result.success) {
-        // Send notification to students
         await sendSessionNotification(sessionId);
       }
       return result;
@@ -282,7 +274,6 @@ export const SessionProvider = ({ children }) => {
     try {
       const result = await FirebaseService.endSession(sessionId);
       if (result.success) {
-        // Clear local session state
         setActiveSession(null);
         setSessionLocation(null);
         setIsSessionActive(false);
@@ -301,11 +292,9 @@ export const SessionProvider = ({ children }) => {
     try {
       const result = await FirebaseService.updateSession(updatedSessionData);
       if (result.success) {
-        // Update local session state
         setActiveSession(updatedSessionData);
         setSessionLocation(updatedSessionData.location);
 
-        // Restart timer with new time limit
         if (updatedSessionData.startedAt) {
           startSessionTimer(updatedSessionData);
         }
@@ -317,7 +306,6 @@ export const SessionProvider = ({ children }) => {
     }
   };
 
-  // Attendance Management
   const submitAttendance = async (sessionId, studentData) => {
     try {
       const isValid = checkLocationInRange(userLocation, sessionLocation);
@@ -342,17 +330,14 @@ export const SessionProvider = ({ children }) => {
       };
 
       if (isOffline) {
-        // Save to offline storage
         const result = await offlineStorageService.saveOfflineSubmission({
           type: "attendance",
           data: attendanceData,
         });
         return result;
       } else {
-        // Submit directly to Firebase
         const result = await FirebaseService.submitAttendance(attendanceData);
 
-        // Submission completed successfully
         if (result.success) {
           markAsSubmitted();
         }
@@ -365,24 +350,25 @@ export const SessionProvider = ({ children }) => {
     }
   };
 
-  // Voting Management
   const submitVote = async (sessionId, studentData, selectedOptions) => {
     try {
       const isValid = checkLocationInRange(userLocation, sessionLocation);
       const isWithinTimeLimit = sessionTimer > 0;
 
-      // Convert option indices to actual option text values
       let selectedOptionTexts = selectedOptions;
-      if (activeSession && activeSession.options && Array.isArray(activeSession.options)) {
-        // Check if selectedOptions contains indices (numbers) or already text values
+      if (
+        activeSession &&
+        activeSession.options &&
+        Array.isArray(activeSession.options)
+      ) {
         const firstOption = selectedOptions[0];
-        const isIndices = typeof firstOption === 'number' || 
-                          (typeof firstOption === 'string' && /^\d+$/.test(firstOption));
-        
+        const isIndices =
+          typeof firstOption === "number" ||
+          (typeof firstOption === "string" && /^\d+$/.test(firstOption));
+
         if (isIndices) {
-          // Convert indices to option text
           selectedOptionTexts = selectedOptions.map((index) => {
-            const idx = typeof index === 'string' ? parseInt(index, 10) : index;
+            const idx = typeof index === "string" ? parseInt(index, 10) : index;
             return activeSession.options[idx] || index;
           });
         }
@@ -411,7 +397,6 @@ export const SessionProvider = ({ children }) => {
       } else {
         const result = await FirebaseService.submitVote(voteData);
 
-        // Submission completed successfully
         if (result.success) {
           markAsSubmitted();
         }
@@ -424,13 +409,11 @@ export const SessionProvider = ({ children }) => {
     }
   };
 
-  // Quiz Management
   const submitQuiz = async (sessionId, studentData, answers) => {
     try {
       const isValid = checkLocationInRange(userLocation, sessionLocation);
       const isWithinTimeLimit = sessionTimer > 0;
 
-      // Calculate score
       const score = calculateQuizScore(answers, activeSession.questions);
       const totalMarks = activeSession.questions.reduce(
         (sum, q) => sum + q.marks,
@@ -466,7 +449,6 @@ export const SessionProvider = ({ children }) => {
       } else {
         const result = await FirebaseService.submitQuiz(quizData);
 
-        // Submission completed successfully
         if (result.success) {
           markAsSubmitted();
         }
@@ -479,7 +461,6 @@ export const SessionProvider = ({ children }) => {
     }
   };
 
-  // Quiz scoring
   const calculateQuizScore = (answers, questions) => {
     let score = 0;
     console.log("Calculating quiz score:");
@@ -511,9 +492,7 @@ export const SessionProvider = ({ children }) => {
     return score;
   };
 
-  // App focus monitoring for quizzes
   const startQuizMonitoring = (questionId, onAutoSubmit) => {
-    // Set up auto-submit callback if provided
     if (onAutoSubmit) {
       appFocusService.setAutoSubmitCallback(onAutoSubmit);
     }
@@ -556,7 +535,6 @@ export const SessionProvider = ({ children }) => {
     appFocusService.resetWarnings();
   };
 
-  // Offline sync
   const syncOfflineData = async () => {
     try {
       const result = await offlineStorageService.syncWithServer(
@@ -569,12 +547,10 @@ export const SessionProvider = ({ children }) => {
     }
   };
 
-  // Notifications - Send to students only
   const sendSessionNotification = async (sessionId) => {
     try {
       console.log("Sending notification for session:", sessionId);
 
-      // Request notification permissions first
       const { status } = await Notifications.getPermissionsAsync();
       if (status !== "granted") {
         const { status: newStatus } =
@@ -585,7 +561,6 @@ export const SessionProvider = ({ children }) => {
         }
       }
 
-      // Send notification to students only
       await Notifications.scheduleNotificationAsync({
         content: {
           title: "🎓 Class Session Started!",
@@ -593,7 +568,7 @@ export const SessionProvider = ({ children }) => {
           data: { sessionId, type: "session_started", target: "students" },
           sound: true,
         },
-        trigger: null, // Send immediately
+        trigger: null,
       });
 
       console.log("Student notification sent successfully");
@@ -602,12 +577,10 @@ export const SessionProvider = ({ children }) => {
     }
   };
 
-  // Send notification to teacher
   const sendTeacherNotification = async (sessionId, sessionType) => {
     try {
       console.log("Sending teacher notification for session:", sessionId);
 
-      // Request notification permissions first
       const { status } = await Notifications.getPermissionsAsync();
       if (status !== "granted") {
         const { status: newStatus } =
@@ -618,7 +591,6 @@ export const SessionProvider = ({ children }) => {
         }
       }
 
-      // Send notification to teacher
       await Notifications.scheduleNotificationAsync({
         content: {
           title: "✅ Session Created & Started!",
@@ -626,7 +598,7 @@ export const SessionProvider = ({ children }) => {
           data: { sessionId, type: "session_created", target: "teacher" },
           sound: true,
         },
-        trigger: null, // Send immediately
+        trigger: null,
       });
 
       console.log("Teacher notification sent successfully");
@@ -635,7 +607,6 @@ export const SessionProvider = ({ children }) => {
     }
   };
 
-  // Force range check (useful for manual refresh)
   const forceRangeCheck = () => {
     if (userLocation && sessionLocation) {
       console.log("Force range check triggered");
@@ -648,7 +619,6 @@ export const SessionProvider = ({ children }) => {
     return false;
   };
 
-  // Utility functions
   const getSessionTimeRemaining = () => {
     return Math.max(0, sessionTimer);
   };
@@ -670,7 +640,6 @@ export const SessionProvider = ({ children }) => {
   };
 
   const value = {
-    // Session state
     activeSession,
     sessionLocation,
     isSessionActive,
@@ -678,19 +647,13 @@ export const SessionProvider = ({ children }) => {
     isInRange,
     sessionTimer,
     isOffline,
-
-    // Session management
     createSession,
     startSession,
     endSession,
     updateSession,
-
-    // Submissions
     submitAttendance,
     submitVote,
     submitQuiz,
-
-    // Quiz monitoring
     startQuizMonitoring,
     stopQuizMonitoring,
     getQuizIntegrityReport,
@@ -701,15 +664,9 @@ export const SessionProvider = ({ children }) => {
     setQuizSuspiciousThreshold,
     getQuizWarningCount,
     resetQuizWarnings,
-
-    // Offline sync
     syncOfflineData,
-
-    // Notifications
     sendSessionNotification,
     sendTeacherNotification,
-
-    // Utilities
     getSessionTimeRemaining,
     isSessionExpired,
     canSubmit,
