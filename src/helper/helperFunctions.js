@@ -7,19 +7,23 @@ export function formatTime(seconds) {
 export function getDistanceToSession(activeSession, userLocation) {
   if (!activeSession || !userLocation) return null;
 
-  const R = 6371e3;
-  const φ1 = (userLocation.latitude * Math.PI) / 180;
-  const φ2 = (activeSession.location.latitude * Math.PI) / 180;
-  const Δφ =
-    ((activeSession.location.latitude - userLocation.latitude) * Math.PI) / 180;
-  const Δλ =
-    ((activeSession.location.longitude - userLocation.longitude) * Math.PI) /
-    180;
+  const earthRadius = 6371e3;
+  const userLatitudeInRadius = (userLoc.latitude * Math.PI) / 180;
+  const sessionLatitudeInRadius = (sessionLoc.latitude * Math.PI) / 180;
+  const deltaLatitudeInRadius =
+    ((sessionLoc.latitude - userLoc.latitude) * Math.PI) / 180;
+  const deltaLongitudeInRadius =
+    ((sessionLoc.longitude - userLoc.longitude) * Math.PI) / 180;
 
   const a =
-    Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-    Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    Math.sin(deltaLatitudeInRadius / 2) * Math.sin(deltaLatitudeInRadius / 2) +
+    Math.cos(userLatitudeInRadius) *
+      Math.cos(sessionLatitudeInRadius) *
+      Math.sin(deltaLongitudeInRadius / 2) *
+      Math.sin(deltaLongitudeInRadius / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-  return R * c;
+  const distance = earthRadius * c;
+
+  return distance;
 }
