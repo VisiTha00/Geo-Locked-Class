@@ -4,6 +4,8 @@ import * as Location from "expo-location";
 import FirebaseService from "../service/firebaseService";
 import appFocusService from "../service/appFocusService";
 import { SESSION_STATUS, SUBMISSION_STATUS } from "../types/sessionTypes";
+import offlineStorageService from "../service/offlineStorageService";
+import firebaseService from "../service/firebaseService";
 
 const SessionContext = createContext();
 
@@ -335,11 +337,11 @@ export const SessionProvider = ({ children }) => {
       };
 
       if (isOffline) {
-        const result = {
+        const result = await offlineStorageService.saveOfflineSubmission({
           type: "attendance",
           data: attendanceData,
-        };
-        console.log(result);
+        });
+        return result;
       } else {
         const result = await FirebaseService.submitAttendance(attendanceData);
 
@@ -394,11 +396,11 @@ export const SessionProvider = ({ children }) => {
       };
 
       if (isOffline) {
-        const result = {
+        const result = await offlineStorageService.saveOfflineSubmission({
           type: "voting",
           data: voteData,
-        };
-        console.log(result);
+        });
+        return result;
       } else {
         const result = await FirebaseService.submitVote(voteData);
 
@@ -446,11 +448,11 @@ export const SessionProvider = ({ children }) => {
       };
 
       if (isOffline) {
-        const result = {
+        const result = await offlineStorageService.saveOfflineSubmission({
           type: "quiz",
           data: quizData,
-        };
-        console.log(result);
+        });
+        return result;
       } else {
         const result = await FirebaseService.submitQuiz(quizData);
 
@@ -542,7 +544,10 @@ export const SessionProvider = ({ children }) => {
 
   const syncOfflineData = async () => {
     try {
-      console.log("Sync with the server.");
+      const result = await offlineStorageService.syncWithServer(
+        firebaseService
+      );
+      return result;
     } catch (error) {
       console.error("Error syncing offline data:", error);
       return { success: false, error: error.message };
