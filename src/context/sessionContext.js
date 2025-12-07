@@ -473,25 +473,13 @@ export const SessionProvider = ({ children }) => {
     console.log("Calculating quiz score:");
     console.log("Answers:", answers);
     console.log("Questions:", questions);
-    console.log(
-      "Question IDs in questions:",
-      questions.map((q) => ({ id: q.id, type: typeof q.id }))
-    );
-    console.log(
-      "Question IDs in answers:",
-      answers.map((a) => ({
-        questionId: a.questionId,
-        type: typeof a.questionId,
-      }))
-    );
 
     answers.forEach((answer) => {
       const question = questions.find((q) => q.id === answer.questionId);
       if (question && answer.answer === question.correctAnswer) {
         score += question.marks;
-        console.log(`Correct! Added ${question.marks} marks. Total: ${score}`);
       } else {
-        console.log(`Incorrect. No marks added. Total: ${score}`);
+        console.log(`No marks added. Total: ${score}`);
       }
     });
 
