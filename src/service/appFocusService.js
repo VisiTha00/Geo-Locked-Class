@@ -47,13 +47,8 @@ class AppFocusService {
         }
       );
     }
-
-    console.log(`App focus monitoring started for question: ${questionId}`);
-    console.log(`Blocking enabled: ${this.blockingEnabled}`);
-    console.log(`Warning enabled: ${this.warningEnabled}`);
   }
 
-  // Stop monitoring
   stopMonitoring() {
     if (this.appStateSubscription) {
       this.appStateSubscription.remove();
@@ -89,23 +84,10 @@ class AppFocusService {
 
     this.focusEvents.push(event);
 
-    console.log(`App state changed to: ${nextAppState}`, {
-      ...event,
-      warningCount: this.warningCount,
-      maxWarnings: this.maxWarnings,
-      totalEvents: this.focusEvents.length,
-    });
-
     if (nextAppState === "background" || nextAppState === "inactive") {
-      console.log(
-        "App went to background/inactive - triggering focus loss handler"
-      );
       this.handleAppFocusLoss();
     } else if (nextAppState === "active") {
-      console.log("App became active - monitoring continues");
-
       if (this.pendingAutoSubmit) {
-        console.log("Auto-submit was pending - triggering now");
         this.pendingAutoSubmit = false;
         this.handleMaxWarningsReached();
       }
@@ -113,7 +95,6 @@ class AppFocusService {
   }
 
   handleBackButtonPress() {
-    console.log("Back button pressed during quiz - showing warning");
     this.showWarningDialog(
       "Quiz in Progress",
       "You cannot leave the quiz while it's in progress. This action will be recorded.",
@@ -184,7 +165,6 @@ class AppFocusService {
   }
 
   handleMaxWarningsReached() {
-    console.log("Max warnings reached - triggering auto-submit");
     if (this.onAutoSubmit) {
       console.log("Calling auto-submit callback immediately");
       try {

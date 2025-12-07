@@ -18,13 +18,11 @@ class UserService {
 
   async getUserByEmail(email) {
     try {
-      console.log("Looking up user by email:", email);
       const usersRef = collection(firestore, this.collectionName);
       const q = query(usersRef, where("email", "==", email));
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
-        console.log("No user found with email:", email);
         return null;
       }
 
@@ -33,8 +31,6 @@ class UserService {
         id: userDoc.id,
         ...userDoc.data(),
       };
-
-      console.log("Found user:", userData);
       return userData;
     } catch (error) {
       console.error("Error getting user by email:", error);
@@ -69,7 +65,6 @@ class UserService {
         updatedAt: new Date().toISOString(),
       });
 
-      console.log("User created with ID:", docRef.id);
       return {
         id: docRef.id,
         ...userData,
@@ -87,8 +82,6 @@ class UserService {
         ...updateData,
         updatedAt: new Date().toISOString(),
       });
-
-      console.log("User updated:", userId);
       return true;
     } catch (error) {
       console.error("Error updating user:", error);
@@ -100,7 +93,6 @@ class UserService {
     try {
       const userRef = doc(firestore, this.collectionName, userId);
       await deleteDoc(userRef);
-      console.log("User deleted:", userId);
       return true;
     } catch (error) {
       console.error("Error deleting user:", error);

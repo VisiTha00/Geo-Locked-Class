@@ -27,42 +27,6 @@ class ReportingService {
     return `${sessionType}_${cleanTitle}_${teacherName}_${timestamp}.${format}`;
   }
 
-  async enrichSubmissionsWithUniversityIds(submissions) {
-    try {
-      const enrichedSubmissions = [];
-
-      for (const submission of submissions) {
-        if (submission.universityId) {
-          enrichedSubmissions.push(submission);
-          continue;
-        }
-
-        try {
-          const user = await UserService.getUserById(submission.studentId);
-          if (user && user.universityId) {
-            enrichedSubmissions.push({
-              ...submission,
-              universityId: user.universityId,
-            });
-          } else {
-            enrichedSubmissions.push(submission);
-          }
-        } catch (error) {
-          console.log(
-            "Could not fetch user data for studentId:",
-            submission.studentId
-          );
-          enrichedSubmissions.push(submission);
-        }
-      }
-
-      return enrichedSubmissions;
-    } catch (error) {
-      console.error("Error enriching submissions with university IDs:", error);
-      return submissions;
-    }
-  }
-
   async ensureReportsDirectory() {
     try {
       const dirInfo = await FileSystem.getInfoAsync(this.reportsDir);
@@ -98,7 +62,6 @@ class ReportingService {
     }
   }
 
-  // Helper function to convert option indices to text (for legacy data compatibility)
   convertVotingOptionsToText(selectedOptions, sessionOptions) {
     if (!selectedOptions || !Array.isArray(selectedOptions)) {
       return selectedOptions;
@@ -108,24 +71,21 @@ class ReportingService {
       return selectedOptions;
     }
 
-    // Check if options are already text values or indices
     const firstOption = selectedOptions[0];
     if (firstOption === undefined) {
       return selectedOptions;
     }
 
-    // If it's already a string that doesn't look like a number, return as-is
     if (typeof firstOption === "string" && isNaN(firstOption)) {
       return selectedOptions;
     }
 
-    // Convert indices to option text
     return selectedOptions.map((option) => {
       const idx = typeof option === "string" ? parseInt(option, 10) : option;
       if (!isNaN(idx) && idx >= 0 && idx < sessionOptions.length) {
         return sessionOptions[idx];
       }
-      return option; // Return as-is if conversion fails
+      return option;
     });
   }
 
@@ -278,6 +238,38 @@ class ReportingService {
     return csv;
   }
 
+  async enrichSubmissionsWithUniversityIds(submissions) {
+    try {
+      const enrichedSubmissions = [];
+
+      for (const submission of submissions) {
+        if (submission.universityId) {
+          enrichedSubmissions.push(submission);
+          continue;
+        }
+
+        try {
+          const user = await UserService.getUserById(submission.studentId);
+          if (user && user.universityId) {
+            enrichedSubmissions.push({
+              ...submission,
+              universityId: user.universityId,
+            });
+          } else {
+            enrichedSubmissions.push(submission);
+          }
+        } catch (error) {
+          enrichedSubmissions.push(submission);
+        }
+      }
+
+      return enrichedSubmissions;
+    } catch (error) {
+      console.error("Error enriching submissions with university IDs:", error);
+      return submissions;
+    }
+  }
+
   async generateJSONReport(sessionData) {
     try {
       await this.ensureReportsDirectory();
@@ -406,7 +398,6 @@ class ReportingService {
       await this.ensureReportsDirectory();
 
       const files = await FileSystem.readDirectoryAsync(this.reportsDir);
-      console.log("All files in reports directory:", files);
 
       const reportFiles = files
         .filter(
@@ -426,7 +417,6 @@ class ReportingService {
           size: 0,
         }));
 
-      console.log("Filtered report files:", reportFiles);
       return { success: true, reports: reportFiles };
     } catch (error) {
       console.error("Error getting report list:", error);
@@ -491,7 +481,6 @@ class ReportingService {
       const fileInfo = await FileSystem.getInfoAsync(filePath);
       console.log("PDF file info after copy:", fileInfo);
 
-      console.log("PDF report generated:", filePath);
       return { success: true, filePath, fileName };
     } catch (error) {
       console.error("Error generating PDF report:", error);
@@ -500,10 +489,7 @@ class ReportingService {
   }
 
   buildPDFContent(sessionData, submissions) {
-    // Ensure submissions is always an array
     const safeSubmissions = Array.isArray(submissions) ? submissions : [];
-
-    // Extract session information from the nested structure
     const session = sessionData.session || sessionData;
 
     const sessionType = session.type
@@ -528,7 +514,6 @@ class ReportingService {
                 : "N/A"
             }</td><td>${submission.location ? "Yes" : "No"}</td>`;
           } else if (session.type === "voting") {
-            // Convert indices to option text if needed
             const optionTexts = this.convertVotingOptionsToText(
               submission.selectedOptions || [],
               session.options || []

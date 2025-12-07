@@ -12,7 +12,6 @@ import { database } from "../config/firebase";
 import {
   SESSION_TYPES,
   SESSION_STATUS,
-  SUBMISSION_STATUS,
   Session,
   AttendanceSession,
   VotingSession,
