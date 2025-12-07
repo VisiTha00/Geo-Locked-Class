@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { OfflineSubmission } from "../models/SessionTypes";
+import { OfflineSubmission } from "../types/sessionTypes";
 
 class OfflineStorageService {
   constructor() {
