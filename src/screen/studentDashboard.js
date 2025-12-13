@@ -181,7 +181,11 @@ function StudentDashboard({ navigation }) {
         navigation.navigate("Quiz");
         break;
       default:
-        navigation.navigate("SessionScreen");
+        Alert.alert(
+          "Unknown Session Type", 
+          "The session type is unrecognized."
+        );
+        return;
     }
   }
 
