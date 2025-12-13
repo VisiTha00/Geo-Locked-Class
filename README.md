@@ -225,7 +225,6 @@ Geo-Locked-Class/
 │   │   ├── studentDashboard.js    # Student main screen
 │   │   ├── sessionCreationScreen.js # Create new sessions
 │   │   ├── sessionEditScreen.js   # Edit active sessions
-│   │   ├── sessionScreen.js       # Session details view
 │   │   ├── attendanceScreen.js    # Attendance submission
 │   │   ├── votingScreen.js        # Voting interface
 │   │   ├── quizScreen.js          # Quiz interface
@@ -235,6 +234,7 @@ Geo-Locked-Class/
 │   │   ├── firebaseService.js     # Firebase Realtime Database operations
 │   │   ├── userService.js         # Firestore user management
 │   │   ├── appFocusService.js     # Quiz integrity monitoring
+│   │   ├── offlineStorageService.js     # Offline storage for quiz
 │   │   └── reportingService.js    # Report generation (CSV/JSON/PDF)
 │   └── types/
 │       └── sessionTypes.js        # Type definitions and classes
