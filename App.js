@@ -10,7 +10,6 @@ import SplashScreen from "./src/screen/splashScreen";
 import LoginScreen from "./src/screen/loginScreen";
 import TeacherDashboard from "./src/screen/teacherDashboard";
 import StudentDashboard from "./src/screen/studentDashboard";
-import SessionScreen from "./src/screen/sessionScreen";
 import SessionCreationScreen from "./src/screen/sessionCreationScreen";
 import AttendanceScreen from "./src/screen/attendanceScreen";
 import VotingScreen from "./src/screen/votingScreen";
@@ -49,7 +48,6 @@ function AppNavigator() {
               name="TeacherDashboard"
               component={TeacherDashboard}
             />
-            <Stack.Screen name="SessionScreen" component={SessionScreen} />
             <Stack.Screen
               name="SessionCreation"
               component={SessionCreationScreen}
@@ -67,7 +65,6 @@ function AppNavigator() {
               name="StudentDashboard"
               component={StudentDashboard}
             />
-            <Stack.Screen name="SessionScreen" component={SessionScreen} />
             <Stack.Screen name="Attendance" component={AttendanceScreen} />
             <Stack.Screen name="Voting" component={VotingScreen} />
             <Stack.Screen name="Quiz" component={QuizScreen} />
