@@ -79,7 +79,7 @@ const SessionCreationScreen = ({ navigation }) => {
       }
       sessionData.questions = questions;
       sessionData.totalMarks = questions.reduce((sum, q) => sum + q.marks, 0);
-      sessionData.passingMarks = Math.floor(sessionData.totalMarks * 0.5); // 50% passing
+      sessionData.passingMarks = Math.floor(sessionData.totalMarks * 0.5);
       sessionData.monitorAppFocus = true;
     } else if (sessionType === SESSION_TYPES.VOTING) {
       if (!votingQuestion.trim()) {

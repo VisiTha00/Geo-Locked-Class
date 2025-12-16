@@ -75,7 +75,6 @@ function AppNavigator() {
   );
 }
 
-// Keep the native splash screen visible while we load
 ExpoSplashScreen.preventAutoHideAsync();
 
 export default function App() {
@@ -87,22 +86,17 @@ export default function App() {
 
     async function prepare() {
       try {
-        // Pre-load fonts, make API calls, etc.
         await registerForPushNotificationsAsync();
-
-        // Set up notification listener
         notificationListener = Notifications.addNotificationReceivedListener(
           (notification) => {
             setNotification(notification);
           }
         );
 
-        // Mark app as ready
         setAppIsReady(true);
       } catch (e) {
         console.warn(e);
       } finally {
-        // Hide the native splash screen - your SplashScreen.js component will show
         await ExpoSplashScreen.hideAsync();
       }
     }

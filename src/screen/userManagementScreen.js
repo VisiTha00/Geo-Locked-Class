@@ -15,8 +15,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import UserService from "../service/userService";
 import { useAuth } from "../context/authContext";
 
-const { width, height } = Dimensions.get("window");
-
 const UserManagementScreen = ({ navigation }) => {
   const { user } = useAuth();
   const [users, setUsers] = useState([]);

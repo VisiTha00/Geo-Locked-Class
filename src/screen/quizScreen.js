@@ -108,28 +108,22 @@ function QuizScreen({ navigation }) {
       return;
     }
 
-    // Listen for app state changes to detect when app becomes active after being in background
     const handleAppStateChange = (nextAppState) => {
       if (
         appStateRef.current.match(/inactive|background/) &&
         nextAppState === "active"
       ) {
-        // App just became active after being in background
-        // Small delay to ensure focus events are recorded
         setTimeout(() => {
-          // Check for new background events that haven't been warned about
           const integrityReport = getQuizIntegrityReport();
           const currentBackgroundEvents = integrityReport.backgroundEvents || 0;
 
-          // Only show alert if there are new background events that haven't been warned about
           if (
             integrityReport.isSuspicious &&
             currentBackgroundEvents > lastWarnedEventCountRef.current
           ) {
-            // Update the count immediately to prevent duplicate alerts
             lastWarnedEventCountRef.current = currentBackgroundEvents;
             setShowIntegrityWarning(true);
-            
+
             Alert.alert(
               "Integrity Warning",
               "Suspicious activity detected. Please stay focused on the quiz.",
@@ -143,12 +137,15 @@ function QuizScreen({ navigation }) {
               ]
             );
           }
-        }, 500); // Small delay to ensure events are recorded
+        }, 500);
       }
       appStateRef.current = nextAppState;
     };
 
-    const subscription = AppState.addEventListener("change", handleAppStateChange);
+    const subscription = AppState.addEventListener(
+      "change",
+      handleAppStateChange
+    );
 
     return () => {
       subscription?.remove();
