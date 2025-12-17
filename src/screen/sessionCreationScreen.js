@@ -283,7 +283,7 @@ const SessionCreationScreen = ({ navigation }) => {
               style={styles.removeButton}
               onPress={() => removeVotingOption(index)}
             >
-              <Text style={styles.removeButtonText}>×</Text>
+              <Text style={styles.removeButtonText}>x</Text>
             </TouchableOpacity>
           )}
         </View>
