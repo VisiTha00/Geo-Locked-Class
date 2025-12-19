@@ -199,25 +199,8 @@ function QuizScreen({ navigation }) {
       return;
     }
 
-    const unansweredQuestions = (activeSession.questions || []).filter((q) => {
-      const hasAnswer = answers[q.id] && answers[q.id].answer;
-      return !hasAnswer;
-    });
-
     if (isAutoSubmit) {
       submitQuizAnswers();
-      return;
-    }
-
-    if (unansweredQuestions.length > 0) {
-      Alert.alert(
-        "Incomplete Quiz",
-        `You have ${unansweredQuestions.length} unanswered questions. Are you sure you want to submit?`,
-        [
-          { text: "Cancel", style: "cancel" },
-          { text: "Submit Anyway", onPress: () => submitQuizAnswers() },
-        ]
-      );
       return;
     }
 
@@ -262,10 +245,10 @@ function QuizScreen({ navigation }) {
           ]
         );
       } else {
-        Alert.alert("Error", result.error || "Failed to submit quiz");
+        Alert.alert("Error", result.error || "Network failed. Your teacher will get your submission when you back to online.");
       }
     } catch (error) {
-      Alert.alert("Error", "Failed to submit quiz");
+      Alert.alert("Error", "Network failed. Your teacher will get your submission when you back to online.");
     } finally {
       setIsSubmitting(false);
     }
