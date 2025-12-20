@@ -245,9 +245,7 @@ export const SessionProvider = ({ children }) => {
 
       if (result.success) {
         console.log("Session created successfully, starting session...");
-        const startResult = await FirebaseService.startSession(
-          result.session.id
-        );
+        const startResult = await startSession(result.session.id);
         if (startResult.success) {
           console.log("Session started successfully, sending notifications...");
           await sendTeacherNotification(result.session.id, result.session.type);
