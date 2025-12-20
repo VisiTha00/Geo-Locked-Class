@@ -270,56 +270,6 @@ class ReportingService {
     }
   }
 
-  async generateJSONReport(sessionData) {
-    try {
-      await this.ensureReportsDirectory();
-
-      const filename = this.generateReportFilename(sessionData, "json");
-      const filepath = `${this.reportsDir}${filename}`;
-
-      const attendance = await this.enrichSubmissionsWithUniversityIds(
-        sessionData.attendance || []
-      );
-      const voting = await this.enrichSubmissionsWithUniversityIds(
-        sessionData.voting || []
-      );
-      const quiz = await this.enrichSubmissionsWithUniversityIds(
-        sessionData.quiz || []
-      );
-
-      const report = new SessionReport({
-        sessionId: sessionData.session.id,
-        sessionType: sessionData.session.type,
-        title: sessionData.session.title,
-        teacherName: sessionData.session.teacherName,
-        createdAt: sessionData.session.createdAt,
-        startedAt: sessionData.session.startedAt,
-        endedAt: sessionData.session.endedAt,
-        totalParticipants: attendance.length + voting.length + quiz.length,
-        validSubmissions: [...attendance, ...voting, ...quiz].filter(
-          (s) => s.isValid
-        ).length,
-        invalidSubmissions: [...attendance, ...voting, ...quiz].filter(
-          (s) => !s.isValid
-        ).length,
-        attendanceData: attendance,
-        votingData: voting,
-        quizData: quiz,
-        summary: this.generateSummary(sessionData),
-      });
-
-      await FileSystem.writeAsStringAsync(
-        filepath,
-        JSON.stringify(report, null, 2)
-      );
-
-      return { success: true, filepath, filename, report };
-    } catch (error) {
-      console.error("Error generating JSON report:", error);
-      return { success: false, error: error.message };
-    }
-  }
-
   generateSummary(sessionData) {
     const { session, attendance, voting, quiz } = sessionData;
 
@@ -400,20 +350,11 @@ class ReportingService {
       const files = await FileSystem.readDirectoryAsync(this.reportsDir);
 
       const reportFiles = files
-        .filter(
-          (file) =>
-            file.endsWith(".csv") ||
-            file.endsWith(".json") ||
-            file.endsWith(".pdf")
-        )
+        .filter((file) => file.endsWith(".csv") || file.endsWith(".pdf"))
         .map((file) => ({
           filename: file,
           filepath: `${this.reportsDir}${file}`,
-          type: file.endsWith(".csv")
-            ? "csv"
-            : file.endsWith(".json")
-            ? "json"
-            : "pdf",
+          type: file.endsWith(".csv") ? "csv" : "pdf",
           size: 0,
         }));
 
