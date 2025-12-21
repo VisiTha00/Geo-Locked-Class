@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useEffect, useRef } from "react";
+import { AppState } from "react-native";
 import * as Notifications from "expo-notifications";
 import * as Location from "expo-location";
+import NetInfo from "@react-native-community/netinfo";
 import FirebaseService from "../service/firebaseService";
 import appFocusService from "../service/appFocusService";
 import { SESSION_STATUS, SUBMISSION_STATUS } from "../types/sessionTypes";
@@ -28,6 +30,9 @@ export const SessionProvider = ({ children }) => {
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [sessionExpired, setSessionExpired] = useState(false);
   const timerIntervalRef = useRef(null);
+  const networkUnsubscribeRef = useRef(null);
+  const appStateSubscriptionRef = useRef(null);
+  const previousNetworkStateRef = useRef(null);
 
   useEffect(() => {
     const handleSessionUpdate = (session) => {
@@ -52,7 +57,11 @@ export const SessionProvider = ({ children }) => {
 
     startLocationMonitoring();
 
-    checkOfflineStatus();
+    // Initialize network monitoring
+    setupNetworkMonitoring();
+
+    // Setup app state listener for syncing when app comes to foreground
+    setupAppStateListener();
 
     return () => {
       FirebaseService.removeSessionListener(handleSessionUpdate);
@@ -60,6 +69,14 @@ export const SessionProvider = ({ children }) => {
       if (timerIntervalRef.current) {
         clearInterval(timerIntervalRef.current);
         timerIntervalRef.current = null;
+      }
+      if (networkUnsubscribeRef.current) {
+        networkUnsubscribeRef.current();
+        networkUnsubscribeRef.current = null;
+      }
+      if (appStateSubscriptionRef.current) {
+        appStateSubscriptionRef.current.remove();
+        appStateSubscriptionRef.current = null;
       }
     };
   }, []);
@@ -118,15 +135,93 @@ export const SessionProvider = ({ children }) => {
 
   const checkOfflineStatus = async () => {
     try {
-      const response = await fetch("https://www.google.com", {
-        method: "HEAD",
-        mode: "no-cors",
-        cache: "no-cache",
+      const state = await NetInfo.fetch();
+      // isInternetReachable can be null, so we check isConnected first
+      // If isInternetReachable is null, we assume it's reachable if connected
+      const isConnected = state.isConnected && (state.isInternetReachable !== false);
+      const isOffline = !isConnected;
+      
+      console.log("Network status check:", {
+        isConnected: state.isConnected,
+        isInternetReachable: state.isInternetReachable,
+        finalIsConnected: isConnected,
+        isOffline: isOffline,
+        type: state.type,
       });
-      setIsOffline(false);
+      
+      setIsOffline(isOffline);
+      previousNetworkStateRef.current = isConnected;
+      return isOffline;
     } catch (error) {
+      console.error("Error checking network status:", error);
       setIsOffline(true);
+      return true;
     }
+  };
+
+  const setupNetworkMonitoring = () => {
+    // Get initial network state
+    checkOfflineStatus().then((isOffline) => {
+      previousNetworkStateRef.current = !isOffline;
+    });
+
+    // Subscribe to network state changes
+    networkUnsubscribeRef.current = NetInfo.addEventListener((state) => {
+      // isInternetReachable can be null, so we check isConnected first
+      const isConnected = state.isConnected && (state.isInternetReachable !== false);
+      const previousWasOffline = previousNetworkStateRef.current === false;
+      const isNowOnline = isConnected && previousWasOffline;
+
+      console.log("Network state changed:", {
+        isConnected,
+        isInternetReachable: state.isInternetReachable,
+        previousWasOffline,
+        isNowOnline,
+        previousState: previousNetworkStateRef.current,
+      });
+
+      // Update state
+      setIsOffline(!isConnected);
+      const previousState = previousNetworkStateRef.current;
+      previousNetworkStateRef.current = isConnected;
+
+      // If we just came back online (was offline, now online), sync offline data
+      if (isNowOnline && previousState !== null) {
+        console.log("Connection restored - syncing offline data");
+        syncOfflineData().then((result) => {
+          if (result.success) {
+            console.log(
+              `Successfully synced ${result.syncedCount || 0} offline submissions`
+            );
+          } else {
+            console.error("Failed to sync offline data:", result.error);
+          }
+        });
+      }
+    });
+  };
+
+  const setupAppStateListener = () => {
+    appStateSubscriptionRef.current = AppState.addEventListener(
+      "change",
+      (nextAppState) => {
+        if (nextAppState === "active") {
+          // App came to foreground, check network and sync if online
+          console.log("App came to foreground - checking network and syncing");
+          checkOfflineStatus().then((isOffline) => {
+            if (!isOffline) {
+              syncOfflineData().then((result) => {
+                if (result.success) {
+                  console.log(
+                    `Synced ${result.syncedCount || 0} offline submissions on app foreground`
+                  );
+                }
+              });
+            }
+          });
+        }
+      }
+    );
   };
 
   const startSessionTimer = (session) => {
@@ -315,6 +410,10 @@ export const SessionProvider = ({ children }) => {
 
   const submitAttendance = async (sessionId, studentData) => {
     try {
+      // Check connectivity at submission time, not just rely on state
+      const isCurrentlyOffline = await checkOfflineStatus();
+      console.log("submitAttendance - isCurrentlyOffline:", isCurrentlyOffline);
+      
       const isValid = checkLocationInRange(userLocation, sessionLocation);
       const isWithinTimeLimit = sessionTimer > 0;
 
@@ -336,20 +435,40 @@ export const SessionProvider = ({ children }) => {
           : "",
       };
 
-      if (isOffline) {
+      if (isCurrentlyOffline) {
+        console.log("Offline - saving attendance to local storage");
         const result = await offlineStorageService.saveOfflineSubmission({
           type: "attendance",
           data: attendanceData,
         });
-        return result;
-      } else {
-        const result = await FirebaseService.submitAttendance(attendanceData);
-
+        console.log("Offline submission result:", result);
         if (result.success) {
           markAsSubmitted();
         }
-
         return result;
+      } else {
+        console.log("Online - attempting to submit attendance to Firebase");
+        try {
+          const result = await FirebaseService.submitAttendance(attendanceData);
+          console.log("Firebase submission result:", result);
+
+          if (result.success) {
+            markAsSubmitted();
+          }
+
+          return result;
+        } catch (error) {
+          // If submission fails, might be due to network issue, save offline
+          console.log("Submission failed, saving offline:", error);
+          const offlineResult = await offlineStorageService.saveOfflineSubmission({
+            type: "attendance",
+            data: attendanceData,
+          });
+          if (offlineResult.success) {
+            markAsSubmitted();
+          }
+          return offlineResult;
+        }
       }
     } catch (error) {
       console.error("Error submitting attendance:", error);
@@ -359,6 +478,9 @@ export const SessionProvider = ({ children }) => {
 
   const submitVote = async (sessionId, studentData, selectedOptions) => {
     try {
+      // Check connectivity at submission time, not just rely on state
+      const isCurrentlyOffline = await checkOfflineStatus();
+      
       const isValid = checkLocationInRange(userLocation, sessionLocation);
       const isWithinTimeLimit = sessionTimer > 0;
 
@@ -395,20 +517,37 @@ export const SessionProvider = ({ children }) => {
             : SUBMISSION_STATUS.INVALID,
       };
 
-      if (isOffline) {
+      if (isCurrentlyOffline) {
+        console.log("Offline - saving vote to local storage");
         const result = await offlineStorageService.saveOfflineSubmission({
           type: "voting",
           data: voteData,
         });
-        return result;
-      } else {
-        const result = await FirebaseService.submitVote(voteData);
-
         if (result.success) {
           markAsSubmitted();
         }
-
         return result;
+      } else {
+        try {
+          const result = await FirebaseService.submitVote(voteData);
+
+          if (result.success) {
+            markAsSubmitted();
+          }
+
+          return result;
+        } catch (error) {
+          // If submission fails, might be due to network issue, save offline
+          console.log("Submission failed, saving offline:", error);
+          const offlineResult = await offlineStorageService.saveOfflineSubmission({
+            type: "voting",
+            data: voteData,
+          });
+          if (offlineResult.success) {
+            markAsSubmitted();
+          }
+          return offlineResult;
+        }
       }
     } catch (error) {
       console.error("Error submitting vote:", error);
@@ -418,6 +557,9 @@ export const SessionProvider = ({ children }) => {
 
   const submitQuiz = async (sessionId, studentData, answers) => {
     try {
+      // Check connectivity at submission time, not just rely on state
+      const isCurrentlyOffline = await checkOfflineStatus();
+      
       const isValid = checkLocationInRange(userLocation, sessionLocation);
       const isWithinTimeLimit = sessionTimer > 0;
 
@@ -447,20 +589,37 @@ export const SessionProvider = ({ children }) => {
         timeSpent: activeSession.timeLimit * 1000 - sessionTimer,
       };
 
-      if (isOffline) {
+      if (isCurrentlyOffline) {
+        console.log("Offline - saving quiz to local storage");
         const result = await offlineStorageService.saveOfflineSubmission({
           type: "quiz",
           data: quizData,
         });
-        return result;
-      } else {
-        const result = await FirebaseService.submitQuiz(quizData);
-
         if (result.success) {
           markAsSubmitted();
         }
-
         return result;
+      } else {
+        try {
+          const result = await FirebaseService.submitQuiz(quizData);
+
+          if (result.success) {
+            markAsSubmitted();
+          }
+
+          return result;
+        } catch (error) {
+          // If submission fails, might be due to network issue, save offline
+          console.log("Submission failed, saving offline:", error);
+          const offlineResult = await offlineStorageService.saveOfflineSubmission({
+            type: "quiz",
+            data: quizData,
+          });
+          if (offlineResult.success) {
+            markAsSubmitted();
+          }
+          return offlineResult;
+        }
       }
     } catch (error) {
       console.error("Error submitting quiz:", error);
