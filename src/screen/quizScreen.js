@@ -255,10 +255,17 @@ function QuizScreen({ navigation }) {
           ]
         );
       } else {
-        Alert.alert("Error", result.error || "Failed to submit quiz");
+        Alert.alert(
+          "Error",
+          result.error ||
+            "Network failed. Your teacher will get your submission when you back to online."
+        );
       }
     } catch (error) {
-      Alert.alert("Error", "Failed to submit quiz");
+      Alert.alert(
+        "Error",
+        "Network failed. Your teacher will get your submission when you back to online."
+      );
     } finally {
       setIsSubmitting(false);
     }
