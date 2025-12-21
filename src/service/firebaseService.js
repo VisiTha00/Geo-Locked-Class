@@ -65,12 +65,9 @@ class FirebaseService {
         startedAt: new Date().toISOString(),
       };
       await update(sessionRef, updates);
-      console.log("Session status updated to ACTIVE");
-
       const session = await this.getSession(sessionId);
       if (session) {
         await set(this.activeSessionRef, session);
-        console.log("Active session updated in Firebase");
       } else {
         console.error("Could not retrieve session to set as active");
       }
@@ -143,10 +140,6 @@ class FirebaseService {
     });
 
     this.listeners.push({ callback, listener });
-    console.log(
-      "Session listener added, total listeners:",
-      this.listeners.length
-    );
     return listener;
   }
 

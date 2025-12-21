@@ -1,4 +1,3 @@
-import { SessionReport } from "../types/sessionTypes";
 import * as FileSystem from "expo-file-system/legacy";
 import * as Sharing from "expo-sharing";
 import { printToFileAsync } from "expo-print";
@@ -154,7 +153,6 @@ class ReportingService {
       const optionCounts = {};
       voting.forEach((vote) => {
         if (vote.isValid) {
-          // Convert indices to option text if needed
           const optionTexts = this.convertVotingOptionsToText(
             vote.selectedOptions,
             session.options
@@ -531,8 +529,8 @@ class ReportingService {
             <div class="info-row">
               <span class="info-label">Location:</span>
               <span>${session.location?.latitude?.toFixed(6) || "N/A"}, ${
-      session.location?.longitude?.toFixed(6) || "N/A"
-    }</span>
+                session.location?.longitude?.toFixed(6) || "N/A"
+              }</span>
             </div>
             <div class="info-row">
               <span class="info-label">Radius:</span>

@@ -20,7 +20,7 @@ const SessionEditScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     if (activeSession) {
-      setTimeLimit(Math.floor(activeSession.timeLimit / 60)); 
+      setTimeLimit(Math.floor(activeSession.timeLimit / 60));
       setRadius(activeSession.location?.radius || 20);
     }
   }, [activeSession]);
@@ -34,13 +34,13 @@ const SessionEditScreen = ({ navigation, route }) => {
     const finalTimeLimit = timeLimit === "" ? 5 : timeLimit;
     const finalRadius = radius === "" ? 20 : radius;
 
-    if (finalTimeLimit < 1 || finalTimeLimit > 120) {
-      Alert.alert("Error", "Time limit must be between 1 and 120 minutes");
+    if (finalTimeLimit < 1) {
+      Alert.alert("Error", "Time limit must be greater than 1 minute");
       return;
     }
 
-    if (finalRadius < 5 || finalRadius > 1000) {
-      Alert.alert("Error", "Radius must be between 5 and 1000 meters");
+    if (finalRadius < 5) {
+      Alert.alert("Error", "Radius must be greater than 5 meters");
       return;
     }
 
@@ -142,7 +142,6 @@ const SessionEditScreen = ({ navigation, route }) => {
                 }
               }}
               keyboardType="numeric"
-              maxLength={3}
             />
           </View>
 
@@ -164,7 +163,6 @@ const SessionEditScreen = ({ navigation, route }) => {
                 }
               }}
               keyboardType="numeric"
-              maxLength={4}
             />
           </View>
         </View>

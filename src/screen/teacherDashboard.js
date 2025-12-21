@@ -34,14 +34,6 @@ function TeacherDashboard({ navigation }) {
     }
 
     if (isSessionActive && activeSession) {
-      const now = Date.now();
-      const startTime = new Date(activeSession.startedAt).getTime();
-      const timeLimit = activeSession.timeLimit * 1000;
-      const endTime = startTime + timeLimit;
-      const initialTime = Math.max(0, Math.floor((endTime - now) / 1000));
-
-      setTimeRemaining(initialTime);
-
       timerRef.current = setInterval(() => {
         const now = Date.now();
         const startTime = new Date(activeSession.startedAt).getTime();
@@ -86,6 +78,9 @@ function TeacherDashboard({ navigation }) {
       const location = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.High,
       });
+      if (activeSession && location.coords) {
+        forceRangeCheck();
+      }
     } catch (error) {
       console.error("Error getting location:", error);
       Alert.alert("Error", "Failed to get current location");
@@ -193,8 +188,8 @@ function TeacherDashboard({ navigation }) {
                       timeRemaining <= 0
                         ? "#F44336"
                         : timeRemaining <= 60
-                        ? "#FF9800"
-                        : "#333",
+                          ? "#FF9800"
+                          : "#333",
                   },
                 ]}
               >

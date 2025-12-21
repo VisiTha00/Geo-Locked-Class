@@ -47,7 +47,6 @@ export const SessionProvider = ({ children }) => {
       }
     };
 
-    console.log("Adding Firebase session listener");
     FirebaseService.addSessionListener(handleSessionUpdate);
 
     startLocationMonitoring();
@@ -66,10 +65,7 @@ export const SessionProvider = ({ children }) => {
 
   useEffect(() => {
     if (userLocation && sessionLocation) {
-      console.log("Recalculating range - User location:", userLocation);
-      console.log("Recalculating range - Session location:", sessionLocation);
       const inRange = checkLocationInRange(userLocation, sessionLocation);
-      console.log("Range calculation result:", inRange);
       setIsInRange(inRange);
     } else if (sessionLocation && !userLocation) {
       console.log("Session location available but user location not ready yet");
@@ -81,7 +77,6 @@ export const SessionProvider = ({ children }) => {
     if (isSessionActive && sessionLocation && userLocation) {
       console.log("Session became active, forcing range recalculation");
       const inRange = checkLocationInRange(userLocation, sessionLocation);
-      console.log("Active session range check result:", inRange);
       setIsInRange(inRange);
     }
   }, [isSessionActive, sessionLocation, userLocation]);
@@ -97,7 +92,7 @@ export const SessionProvider = ({ children }) => {
       const location = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.High,
       });
-      console.log("Initial location obtained:", location.coords);
+      console.log("Initial location:", location.coords);
       setUserLocation(location.coords);
 
       Location.watchPositionAsync(
@@ -146,14 +141,6 @@ export const SessionProvider = ({ children }) => {
     const currentTime = Date.now();
     const timeUntilEnd = Math.floor((endTime - currentTime) / 1000);
 
-    console.log("Starting session timer:", {
-      startTime: new Date(startTime).toISOString(),
-      timeLimit: session.timeLimit,
-      endTime: new Date(endTime).toISOString(),
-      currentTime: new Date(currentTime).toISOString(),
-      timeUntilEnd: timeUntilEnd,
-    });
-
     setSessionTimer(timeUntilEnd);
 
     if (timeUntilEnd <= 0) {
@@ -191,7 +178,7 @@ export const SessionProvider = ({ children }) => {
     setSessionExpired(true);
     if (activeSession && activeSession.type) {
       try {
-        console.log("Session expired - students should auto-submit");
+        console.log("Session expired. Students should auto-submit");
       } catch (error) {
         console.error("Error handling session time limit:", error);
       }
@@ -200,7 +187,7 @@ export const SessionProvider = ({ children }) => {
 
   const checkLocationInRange = (userLoc, sessionLoc) => {
     if (!userLoc || !sessionLoc) {
-      console.log("Location validation failed - missing location data");
+      console.log("Location validation failed");
       return false;
     }
 
@@ -224,53 +211,26 @@ export const SessionProvider = ({ children }) => {
     const distance = earthRadius * c;
     const isInRange = distance <= sessionLoc.radius;
 
-    console.log("Location validation details:");
-    console.log("- User location:", userLoc.latitude, userLoc.longitude);
-    console.log(
-      "- Session location:",
-      sessionLoc.latitude,
-      sessionLoc.longitude
-    );
-    console.log("- Session radius:", sessionLoc.radius, "meters");
-    console.log("- Calculated distance:", distance.toFixed(2), "meters");
-    console.log("- Is in range:", isInRange);
-
     return isInRange;
   };
 
   const createSession = async (sessionData) => {
     try {
-      console.log("Creating session with data:", sessionData);
       const result = await FirebaseService.createSession(sessionData);
 
       if (result.success) {
-        console.log("Session created successfully, starting session...");
-        const startResult = await startSession(result.session.id);
+        const startResult = await FirebaseService.startSession(
+          result.session.id
+        );
         if (startResult.success) {
-          console.log("Session started successfully, sending notifications...");
           await sendTeacherNotification(result.session.id, result.session.type);
-          console.log("Teacher notification sent");
         } else {
           console.error("Failed to start session:", startResult.error);
         }
       }
-
       return result;
     } catch (error) {
       console.error("Error creating session:", error);
-      return { success: false, error: error.message };
-    }
-  };
-
-  const startSession = async (sessionId) => {
-    try {
-      const result = await FirebaseService.startSession(sessionId);
-      if (result.success) {
-        await sendSessionNotification(sessionId);
-      }
-      return result;
-    } catch (error) {
-      console.error("Error starting session:", error);
       return { success: false, error: error.message };
     }
   };
@@ -330,8 +290,8 @@ export const SessionProvider = ({ children }) => {
         notes: !isValid
           ? "Outside geo-fence"
           : !isWithinTimeLimit
-          ? "Time limit exceeded"
-          : "",
+            ? "Time limit exceeded"
+            : "",
       };
 
       if (isOffline) {
@@ -468,9 +428,6 @@ export const SessionProvider = ({ children }) => {
 
   const calculateQuizScore = (answers, questions) => {
     let score = 0;
-    console.log("Calculating quiz score:");
-    console.log("Answers:", answers);
-    console.log("Questions:", questions);
 
     answers.forEach((answer) => {
       const question = questions.find((q) => q.id === answer.questionId);
@@ -530,43 +487,12 @@ export const SessionProvider = ({ children }) => {
 
   const syncOfflineData = async () => {
     try {
-      const result = await offlineStorageService.syncWithServer(
-        firebaseService
-      );
+      const result =
+        await offlineStorageService.syncWithServer(firebaseService);
       return result;
     } catch (error) {
       console.error("Error syncing offline data:", error);
       return { success: false, error: error.message };
-    }
-  };
-
-  const sendSessionNotification = async (sessionId) => {
-    try {
-      console.log("Sending notification for session:", sessionId);
-
-      const { status } = await Notifications.getPermissionsAsync();
-      if (status !== "granted") {
-        const { status: newStatus } =
-          await Notifications.requestPermissionsAsync();
-        if (newStatus !== "granted") {
-          console.log("Notification permission denied");
-          return;
-        }
-      }
-
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: "🎓 Class Session Started!",
-          body: "A new class session has started. Check if you're in range to join.",
-          data: { sessionId, type: "session_started", target: "students" },
-          sound: true,
-        },
-        trigger: null,
-      });
-
-      console.log("Student notification sent successfully");
-    } catch (error) {
-      console.error("Error sending notification:", error);
     }
   };
 
@@ -602,13 +528,12 @@ export const SessionProvider = ({ children }) => {
 
   const forceRangeCheck = () => {
     if (userLocation && sessionLocation) {
-      console.log("Force range check triggered");
       const inRange = checkLocationInRange(userLocation, sessionLocation);
-      console.log("Force range check result:", inRange);
+      console.log("Force range check");
       setIsInRange(inRange);
       return inRange;
     }
-    console.log("Cannot force range check - missing location data");
+    console.log("Cannot force range check");
     return false;
   };
 
@@ -641,7 +566,6 @@ export const SessionProvider = ({ children }) => {
     sessionTimer,
     isOffline,
     createSession,
-    startSession,
     endSession,
     updateSession,
     submitAttendance,
@@ -658,7 +582,6 @@ export const SessionProvider = ({ children }) => {
     getQuizWarningCount,
     resetQuizWarnings,
     syncOfflineData,
-    sendSessionNotification,
     sendTeacherNotification,
     getSessionTimeRemaining,
     isSessionExpired,

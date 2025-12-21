@@ -64,8 +64,6 @@ class AppFocusService {
     this.currentQuestionId = null;
     this.startTime = null;
     this.warningCount = 0;
-
-    console.log("App focus monitoring stopped");
   }
 
   handleAppStateChange(nextAppState) {
@@ -98,16 +96,11 @@ class AppFocusService {
     this.showWarningDialog(
       "Quiz in Progress",
       "You cannot leave the quiz while it's in progress. This action will be recorded.",
-      "Stay in Quiz",
-      "Leave Quiz (Warning)"
+      "Stay in Quiz"
     );
   }
 
   handleAppFocusLoss() {
-    console.log(
-      `Current warning count: ${this.warningCount}, Max warnings: ${this.maxWarnings}`
-    );
-
     this.warningCount++;
     console.log(`Warning count incremented to: ${this.warningCount}`);
 
@@ -138,7 +131,7 @@ class AppFocusService {
     }
   }
 
-  showWarningDialog(title, message, stayButton, leaveButton) {
+  showWarningDialog(title, message, stayButton) {
     Alert.alert(
       title,
       message,
@@ -148,15 +141,6 @@ class AppFocusService {
           style: "default",
           onPress: () => {
             console.log("User chose to stay in quiz");
-          },
-        },
-        {
-          text: leaveButton,
-          style: "destructive",
-          onPress: () => {
-            console.log("User chose to leave quiz despite warning");
-            this.warningCount++;
-            this.handleAppFocusLoss();
           },
         },
       ],
@@ -183,7 +167,7 @@ class AppFocusService {
         {
           text: "OK",
           onPress: () => {
-            console.log("User acknowledged auto-submit alert");
+            console.log("User acknowledged auto submit alert");
           },
         },
       ],
@@ -346,7 +330,7 @@ class AppFocusService {
 
   setAutoSubmitCallback(callback) {
     this.onAutoSubmit = callback;
-    console.log(`Auto-submit callback set: ${!!callback}`);
+    console.log(`Auto submit callback set: ${!!callback}`);
   }
 
   getWarningCount() {
@@ -381,7 +365,6 @@ class AppFocusService {
   }
 
   forceAutoSubmit() {
-    console.log("Force auto-submit called");
     if (this.onAutoSubmit) {
       try {
         this.onAutoSubmit();

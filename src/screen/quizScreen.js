@@ -34,6 +34,7 @@ function QuizScreen({ navigation }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const answersRef = useRef({});
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [questionStartTime, setQuestionStartTime] = useState(Date.now());
@@ -63,7 +64,7 @@ function QuizScreen({ navigation }) {
         !hasShownTimeoutAlert
       ) {
         setHasShownTimeoutAlert(true);
-        handleSubmitQuiz();
+        handleSubmitQuiz(true);
       }
     }, 1000);
 
@@ -87,7 +88,6 @@ function QuizScreen({ navigation }) {
       startQuizMonitoring("quiz_session", handleAutoSubmit);
       setQuestionStartTime(Date.now());
       resetQuizWarnings();
-      // Reset warning tracking when quiz starts
       lastWarnedEventCountRef.current = 0;
       setShowIntegrityWarning(false);
     }
@@ -102,6 +102,10 @@ function QuizScreen({ navigation }) {
       setQuestionStartTime(Date.now());
     }
   }, [currentQuestionIndex]);
+
+  useEffect(() => {
+    answersRef.current = answers;
+  }, [answers]);
 
   useEffect(() => {
     if (hasSubmitted || !activeSession) {
@@ -163,6 +167,7 @@ function QuizScreen({ navigation }) {
           submittedAt: new Date().toISOString(),
         },
       };
+      answersRef.current = newAnswers;
       return newAnswers;
     });
   }
@@ -189,34 +194,17 @@ function QuizScreen({ navigation }) {
       return;
     }
 
+    if (isAutoSubmit) {
+      submitQuizAnswers();
+      return;
+    }
+
     if (!canSubmit()) {
       Alert.alert(
         "Cannot Submit Quiz",
         isSessionExpired()
           ? "Session time has expired"
           : "You must be within the required range to submit the quiz"
-      );
-      return;
-    }
-
-    const unansweredQuestions = (activeSession.questions || []).filter((q) => {
-      const hasAnswer = answers[q.id] && answers[q.id].answer;
-      return !hasAnswer;
-    });
-
-    if (isAutoSubmit) {
-      submitQuizAnswers();
-      return;
-    }
-
-    if (unansweredQuestions.length > 0) {
-      Alert.alert(
-        "Incomplete Quiz",
-        `You have ${unansweredQuestions.length} unanswered questions. Are you sure you want to submit?`,
-        [
-          { text: "Cancel", style: "cancel" },
-          { text: "Submit Anyway", onPress: () => submitQuizAnswers() },
-        ]
       );
       return;
     }
@@ -228,7 +216,12 @@ function QuizScreen({ navigation }) {
     setIsSubmitting(true);
 
     try {
-      const answersArray = Object.entries(answers).map(
+      const currentAnswers =
+        Object.keys(answersRef.current).length > 0
+          ? answersRef.current
+          : answers;
+
+      const answersArray = Object.entries(currentAnswers).map(
         ([questionId, answerData]) => ({
           questionId,
           ...answerData,
@@ -556,8 +549,8 @@ function QuizScreen({ navigation }) {
                     {isSessionExpired()
                       ? "Session Expired"
                       : !isInRange
-                      ? "Move Closer to Submit"
-                      : "Submit Quiz"}
+                        ? "Move Closer to Submit"
+                        : "Submit Quiz"}
                   </Text>
                 )}
               </TouchableOpacity>

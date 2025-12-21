@@ -133,12 +133,12 @@ const UserManagementScreen = ({ navigation }) => {
         end={{ x: 1, y: 1 }}
       >
         <View style={styles.header}>
-          <Text style={styles.title}>User Management 👥</Text>
+          <Text style={styles.title}>User Management</Text>
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
-            <Text style={styles.backButtonText}>← Back</Text>
+            <Text style={styles.backButtonText}>Back</Text>
           </TouchableOpacity>
         </View>
       </LinearGradient>
@@ -269,8 +269,8 @@ const UserManagementScreen = ({ navigation }) => {
                         user.role === "teacher"
                           ? "#007AFF"
                           : user.role === "admin"
-                          ? "#FF9500"
-                          : "#34C759",
+                            ? "#FF9500"
+                            : "#34C759",
                     },
                   ]}
                 >

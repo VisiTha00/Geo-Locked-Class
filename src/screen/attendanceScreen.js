@@ -52,9 +52,7 @@ function AttendanceScreen({ navigation }) {
         activeSession &&
         !hasShownTimeoutAlert
       ) {
-        console.log(
-          "Time limit exceeded - attendance session ended without submission"
-        );
+        console.log("Time limit exceeded");
         setHasShownTimeoutAlert(true);
         Alert.alert(
           "Session Ended",
@@ -279,8 +277,8 @@ function AttendanceScreen({ navigation }) {
                     {isSessionExpired()
                       ? "Session Expired"
                       : !isInRange
-                      ? "Move Closer to Mark Attendance"
-                      : "Mark Attendance"}
+                        ? "Move Closer to Mark Attendance"
+                        : "Mark Attendance"}
                   </Text>
                 )}
               </TouchableOpacity>

@@ -99,7 +99,6 @@ function StudentDashboard({ navigation }) {
       setLastChecked(new Date());
 
       if (activeSession && location.coords) {
-        console.log("Manual location check triggered");
         forceRangeCheck();
       }
     } catch (error) {
@@ -182,7 +181,7 @@ function StudentDashboard({ navigation }) {
         break;
       default:
         Alert.alert(
-          "Unknown Session Type", 
+          "Unknown Session Type",
           "The session type is unrecognized."
         );
         return;
@@ -191,7 +190,6 @@ function StudentDashboard({ navigation }) {
 
   function handleLogout() {
     if (!user) {
-      console.log("User is null, logging out directly");
       logout();
       return;
     }
@@ -330,13 +328,13 @@ function StudentDashboard({ navigation }) {
                 {isSubmitted()
                   ? "Already Submitted"
                   : isSessionExpired()
-                  ? "Session Timed Out"
-                  : canSubmit()
-                  ? `Join ${
-                      activeSession.type.charAt(0).toUpperCase() +
-                      activeSession.type.slice(1)
-                    } Session`
-                  : "Move Closer to Join"}
+                    ? "Session Timed Out"
+                    : canSubmit()
+                      ? `Join ${
+                          activeSession.type.charAt(0).toUpperCase() +
+                          activeSession.type.slice(1)
+                        } Session`
+                      : "Move Closer to Join"}
               </Text>
             </TouchableOpacity>
           </View>

@@ -5,9 +5,6 @@ class OfflineStorageService {
   constructor() {
     this.STORAGE_KEYS = {
       OFFLINE_SUBMISSIONS: "offline_submissions",
-      USER_DATA: "user_data",
-      SESSION_CACHE: "session_cache",
-      SETTINGS: "app_settings",
     };
   }
 
@@ -91,97 +88,6 @@ class OfflineStorageService {
     }
   }
 
-  async cacheSession(session) {
-    try {
-      const cacheKey = `${this.STORAGE_KEYS.SESSION_CACHE}_${session.id}`;
-      await AsyncStorage.setItem(cacheKey, JSON.stringify(session));
-      return { success: true };
-    } catch (error) {
-      console.error("Error caching session:", error);
-      return { success: false, error: error.message };
-    }
-  }
-
-  async getCachedSession(sessionId) {
-    try {
-      const cacheKey = `${this.STORAGE_KEYS.SESSION_CACHE}_${sessionId}`;
-      const data = await AsyncStorage.getItem(cacheKey);
-      return data ? JSON.parse(data) : null;
-    } catch (error) {
-      console.error("Error getting cached session:", error);
-      return null;
-    }
-  }
-
-  async clearSessionCache(sessionId) {
-    try {
-      const cacheKey = `${this.STORAGE_KEYS.SESSION_CACHE}_${sessionId}`;
-      await AsyncStorage.removeItem(cacheKey);
-      return { success: true };
-    } catch (error) {
-      console.error("Error clearing session cache:", error);
-      return { success: false, error: error.message };
-    }
-  }
-
-  async saveUserData(userData) {
-    try {
-      await AsyncStorage.setItem(
-        this.STORAGE_KEYS.USER_DATA,
-        JSON.stringify(userData)
-      );
-      return { success: true };
-    } catch (error) {
-      console.error("Error saving user data:", error);
-      return { success: false, error: error.message };
-    }
-  }
-
-  async getUserData() {
-    try {
-      const data = await AsyncStorage.getItem(this.STORAGE_KEYS.USER_DATA);
-      return data ? JSON.parse(data) : null;
-    } catch (error) {
-      console.error("Error getting user data:", error);
-      return null;
-    }
-  }
-
-  async saveSettings(settings) {
-    try {
-      await AsyncStorage.setItem(
-        this.STORAGE_KEYS.SETTINGS,
-        JSON.stringify(settings)
-      );
-      return { success: true };
-    } catch (error) {
-      console.error("Error saving settings:", error);
-      return { success: false, error: error.message };
-    }
-  }
-
-  async getSettings() {
-    try {
-      const data = await AsyncStorage.getItem(this.STORAGE_KEYS.SETTINGS);
-      return data
-        ? JSON.parse(data)
-        : {
-            locationAccuracy: "high",
-            autoSync: true,
-            notifications: true,
-            offlineMode: false,
-          };
-    } catch (error) {
-      console.error("Error getting settings:", error);
-      return {
-        locationAccuracy: "high",
-        autoSync: true,
-        notifications: true,
-        offlineMode: false,
-      };
-    }
-  }
-
   async syncWithServer(firebaseService) {
     try {
       const unsyncedSubmissions = await this.getUnsyncedSubmissions();
@@ -190,9 +96,8 @@ class OfflineStorageService {
         return { success: true, message: "No submissions to sync" };
       }
 
-      const results = await firebaseService.syncOfflineSubmissions(
-        unsyncedSubmissions
-      );
+      const results =
+        await firebaseService.syncOfflineSubmissions(unsyncedSubmissions);
 
       for (const result of results) {
         if (result.success) {
@@ -215,52 +120,11 @@ class OfflineStorageService {
 
   async clearAllData() {
     try {
-      await AsyncStorage.multiRemove([
-        this.STORAGE_KEYS.OFFLINE_SUBMISSIONS,
-        this.STORAGE_KEYS.USER_DATA,
-        this.STORAGE_KEYS.SESSION_CACHE,
-        this.STORAGE_KEYS.SETTINGS,
-      ]);
+      await AsyncStorage.removeItem([this.STORAGE_KEYS.OFFLINE_SUBMISSIONS]);
       return { success: true };
     } catch (error) {
       console.error("Error clearing all data:", error);
       return { success: false, error: error.message };
-    }
-  }
-
-  async getStorageStats() {
-    try {
-      const submissions = await this.getOfflineSubmissions();
-      const unsynced = await this.getUnsyncedSubmissions();
-
-      return {
-        totalSubmissions: submissions.length,
-        unsyncedSubmissions: unsynced.length,
-        syncedSubmissions: submissions.length - unsynced.length,
-        storageUsed: await this.getStorageSize(),
-      };
-    } catch (error) {
-      console.error("Error getting storage stats:", error);
-      return null;
-    }
-  }
-
-  async getStorageSize() {
-    try {
-      const keys = await AsyncStorage.getAllKeys();
-      let totalSize = 0;
-
-      for (const key of keys) {
-        const value = await AsyncStorage.getItem(key);
-        if (value) {
-          totalSize += value.length;
-        }
-      }
-
-      return totalSize;
-    } catch (error) {
-      console.error("Error calculating storage size:", error);
-      return 0;
     }
   }
 }
